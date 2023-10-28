@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, json, useNavigate } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.svg';
 import { useState } from 'react';
@@ -6,24 +6,41 @@ import { useState } from 'react';
 const SignIn = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const { isLogged } = useAuth()
+  const navigate = useNavigate(); // Obtener la función de navegación del enrutador
 
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let form = new FormData();
-    form.append('email', email);
-    form.append('password', password);
+    try {
+      const response = await fetch('http://localhost:8000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    fetch('http://localhost:5000/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application' },
-      body: JSON.stringify({ email, password }),
-    })
-    .then((res) => res.json())
-    .then((data) => console.log(data));
-  }
+      if (response.ok) {
+        const userData = await response.json();
+        console.log('Inicio de sesión exitoso:', userData);
+        setSuccessMessage('Inicio de sesión exitoso. ¡Bienvenido!');
+        navigate('/dashboard'); // Redirigir al usuario al dashboard
+        // Realizar acciones adicionales según la respuesta del backend
+      } else {
+        console.error('Credenciales incorrectas');
+        setErrorMessage('Credenciales incorrectas. Por favor, inténtalo de nuevo.');
+        setSuccessMessage(''); // Limpiar el mensaje de éxito si hay un error
+      }
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      setErrorMessage('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
+      setSuccessMessage(''); // Limpiar el mensaje de éxito en caso de error de red u otros problemas
+    }
+  };
 
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -160,14 +177,14 @@ const SignIn = () => {
             </span>
           </div>
         </div>
-
         <div className="w-full h-[100vh] flex justify-center items-center border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
           <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
             <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
               Inicia sesión
             </h2>
-
-            <form>
+            {errorMessage && <p className="text-red-600">{errorMessage}</p>}
+            {successMessage && <p className="text-green-600">{successMessage}</p>}
+            <form onSubmit={handleLogin}>
               <div className="mb-4">
                 <label className="mb-2.5 block font-medium text-black dark:text-white">
                   Correo Electronico
