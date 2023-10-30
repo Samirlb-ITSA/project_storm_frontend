@@ -3,6 +3,10 @@ import LogoDark from '../../images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.svg';
 import { useState } from 'react';
 
+class User {
+  apellido: string = "";
+};
+
 const SignIn = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -25,8 +29,10 @@ const SignIn = () => {
       });
 
       if (response.ok) {
-        const userData = await response.json();
-        console.log('Inicio de sesión exitoso:', userData);
+        const userData: User = await response.json();
+        console.log(userData)
+        const userJSON = JSON.stringify(userData);
+        localStorage.setItem("userData", userJSON);
         setSuccessMessage('Inicio de sesión exitoso. ¡Bienvenido!');
         navigate('/dashboard'); // Redirigir al usuario al dashboard
         // Realizar acciones adicionales según la respuesta del backend

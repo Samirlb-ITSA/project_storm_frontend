@@ -8,13 +8,13 @@ const User = {
   phoneNumber: "",
   address: "",
   password: "",
-  role: 1,
+  roleId: 1,
 };
 
 
 const UserForm = () => {
   const [formData, setFormData] = useState(User);
-  const { name, lastName, email, phoneNumber, address, password, role } = formData;
+  const { name, lastName, email, phoneNumber, address, password, roleId } = formData;
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevState) => ({
@@ -152,11 +152,11 @@ const UserForm = () => {
                   </label>
                   <div className="relative z-20 bg-transparent dark:bg-form-input">
                     <select
-                    defaultValue={role}
-                    name="role"
+                    defaultValue={roleId}
+                    name="roleId"
                     className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary">
-                      <option value="1">Profesor</option>
-                      <option value="2">Egresado</option>
+                      <option value="1">Egresado</option>
+                      <option value="2">Profesor</option>
                       <option value="3">Admin</option>
                     </select>
                     <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">

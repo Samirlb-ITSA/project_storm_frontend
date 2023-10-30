@@ -2,7 +2,7 @@ import { Suspense, lazy, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-import ECommerce from './pages/Dashboard/ECommerce';
+import { ProtectedRoute } from './components/ProtectedRoute'
 import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import Loader from './common/Loader';
@@ -38,9 +38,11 @@ function App() {
                 key={index}
                 path={path}
                 element={
-                  <Suspense fallback={<Loader />}>
-                    <Component />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Loader />}>
+                      <Component />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               />
             );
