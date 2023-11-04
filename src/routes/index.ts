@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import UploadUsers from '../pages/Dashboard/UploadUsers';
 
 const Calendar = lazy(() => import('../pages/Calendar'));
 const Chart = lazy(() => import('../pages/Chart'));
@@ -43,6 +44,11 @@ const coreRoutes = [
     path: '/dashboard/users/list',
     title: 'Lista de usuarios',
     component: Users,
+  },
+  {
+    path: '/dashboard/users/upload',
+    title: 'Importar usuarios',
+    component: UploadUsers,
   },
   {
     path: '/tables',
