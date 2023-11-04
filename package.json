@@ -14,6 +14,7 @@
     "url": "https://tailadmin.com"
   },
   "dependencies": {
+    "@types/xlsx": "^0.0.36",
     "apexcharts": "^3.41.0",
     "exceljs": "^4.4.0",
     "headlessui": "^0.0.0",
