@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import { Outlet } from 'react-router-dom';
+import ChatWidget from '../components/ChatWidget';
 
 const DefaultLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -31,6 +32,7 @@ const DefaultLayout = () => {
         {/* <!-- ===== Content Area End ===== --> */}
       </div>
       {/* <!-- ===== Page Wrapper End ===== --> */}
+      <ChatWidget /> {}
     </div>
   );
 };

@@ -36,12 +36,12 @@ const coreRoutes = [
   },
   {
     path: '/dashboard/users/create',
-    title: 'Usuario',
+    title: 'Crear usuario',
     component: UserForm,
   },
   {
     path: '/dashboard/users/list',
-    title: 'Usuario',
+    title: 'Lista de usuarios',
     component: Users,
   },
   {

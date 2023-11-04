@@ -30,13 +30,13 @@ function App() {
       <Routes>
         <Route index element={ <Navigate to={"/auth/signin"}/> }/>
         <Route path="/auth/signin" element={
-            <PublicRoutes to={"/dashboard"}>
+            <PublicRoutes to={"/dashboard/"}>
               <SignIn />
             </PublicRoutes>
           }
         />
         <Route path="/auth/signup" element={
-            <PublicRoutes to={"/dashboard"}>
+            <PublicRoutes to={"/dashboard/"}>
               <SignUp />
             </PublicRoutes>
           } 

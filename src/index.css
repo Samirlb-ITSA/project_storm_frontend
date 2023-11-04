@@ -161,3 +161,8 @@ span.flatpickr-weekday,
 [x-cloak] {
   display: none !important;
 }
+
+/* En tu archivo CSS */
+.rce-mbox-right .rce-mbox-text {
+  color: #000000 !important; /* Azul */
+}
