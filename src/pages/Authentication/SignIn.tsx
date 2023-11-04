@@ -1,51 +1,26 @@
-import { Link, json, useNavigate } from 'react-router-dom';
-import LogoDark from '../../images/logo/logo-dark.svg';
-import Logo from '../../images/logo/logo.svg';
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import useAuthStore from '../../stores/AuthStore';
+import toast from 'react-hot-toast';
 
-class User {
-  apellido: string = "";
-};
 
 const SignIn = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const navigate = useNavigate(); // Obtener la función de navegación del enrutador
 
-
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const { login } = useAuthStore() // Obtener la función de inicio de sesión del almacén de autenticación
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault(); // Evitar que el formulario se envíe automáticamente
 
-    try {
-      const response = await fetch('http://localhost:8000/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const userData: User = await response.json();
-        console.log(userData)
-        const userJSON = JSON.stringify(userData);
-        localStorage.setItem("userData", userJSON);
-        setSuccessMessage('Inicio de sesión exitoso. ¡Bienvenido!');
-        navigate('/dashboard'); // Redirigir al usuario al dashboard
-        // Realizar acciones adicionales según la respuesta del backend
-      } else {
-        console.error('Credenciales incorrectas');
-        setErrorMessage('Credenciales incorrectas. Por favor, inténtalo de nuevo.');
-        setSuccessMessage(''); // Limpiar el mensaje de éxito si hay un error
-      }
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      setErrorMessage('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
-      setSuccessMessage(''); // Limpiar el mensaje de éxito en caso de error de red u otros problemas
+    const res = await login(email, password) // Iniciar sesión con correo electrónico y contraseña
+    
+    if (res.detail === undefined) {
+      window.location.href = '/dashboard'; // Redirigir a la página de inicio si no hay errores
+      return;
     }
+
+    toast.error(res.detail)
   };
 
   return (
@@ -188,8 +163,6 @@ const SignIn = () => {
             <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
               Inicia sesión
             </h2>
-            {errorMessage && <p className="text-red-600">{errorMessage}</p>}
-            {successMessage && <p className="text-green-600">{successMessage}</p>}
             <form onSubmit={handleLogin}>
               <div className="mb-4">
                 <label className="mb-2.5 block font-medium text-black dark:text-white">

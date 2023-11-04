@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 import { ProtectedRoute } from './components/ProtectedRoute'
@@ -7,6 +7,7 @@ import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import Loader from './common/Loader';
 import routes from './routes';
+import { PublicRoutes } from './components/PublicRoute';
 
 const DefaultLayout = lazy(() => import('./layout/DefaultLayout'));
 
@@ -27,9 +28,19 @@ function App() {
         containerClassName="overflow-auto"
       />
       <Routes>
-        <Route index element={<SignIn />} />
-        <Route path="/auth/signin" element={<SignIn />} />
-        <Route path="/auth/signup" element={<SignUp />} />
+        <Route index element={ <Navigate to={"/auth/signin"}/> }/>
+        <Route path="/auth/signin" element={
+            <PublicRoutes to={"/dashboard"}>
+              <SignIn />
+            </PublicRoutes>
+          }
+        />
+        <Route path="/auth/signup" element={
+            <PublicRoutes to={"/dashboard"}>
+              <SignUp />
+            </PublicRoutes>
+          } 
+        />
         <Route element={<DefaultLayout />}>
           {routes.map((routes, index) => {
             const { path, component: Component } = routes;
@@ -38,7 +49,7 @@ function App() {
                 key={index}
                 path={path}
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute to={"/auth/signin"}>
                     <Suspense fallback={<Loader />}>
                       <Component />
                     </Suspense>

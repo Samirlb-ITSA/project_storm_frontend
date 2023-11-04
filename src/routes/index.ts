@@ -5,6 +5,7 @@ const Chart = lazy(() => import('../pages/Chart'));
 const Dashboard = lazy(() => import('../pages/Dashboard/Home'));
 const FormElements = lazy(() => import('../pages/Form/FormElements'));
 const UserForm = lazy(() => import('../pages/Form/UserForm'));
+const Users = lazy(() => import('../pages/Users/List'));
 const Profile = lazy(() => import('../pages/Profile'));
 const Settings = lazy(() => import('../pages/Settings'));
 const Tables = lazy(() => import('../pages/Tables'));
@@ -37,6 +38,11 @@ const coreRoutes = [
     path: '/forms/user-form',
     title: 'Usuario',
     component: UserForm,
+  },
+  {
+    path: '/users/list',
+    title: 'Usuario',
+    component: Users,
   },
   {
     path: '/tables',

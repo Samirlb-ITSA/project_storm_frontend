@@ -1,20 +1,20 @@
 import Breadcrumb from '../../components/Breadcrumb';
 import { useState } from 'react';
 
-const User = {
-  name: "",
-  lastName: "",
-  email: "",
-  phoneNumber: "",
-  address: "",
-  password: "",
-  roleId: 1,
-};
-
-
 const UserForm = () => {
+  let User = {
+    firstname: '',
+    lastname: '',
+    email: '',
+    cellphone: '',
+    address: '',
+    password: '',
+    roleId: 1,
+  };
+
   const [formData, setFormData] = useState(User);
-  const { name, lastName, email, phoneNumber, address, password, roleId } = formData;
+  const { firstname, lastname, email, cellphone, address, password, roleId } =
+    formData;
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevState) => ({
@@ -23,23 +23,18 @@ const UserForm = () => {
     }));
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    (async () => {
-      const rawResponse = await fetch('http://localhost:8000/create_user', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-      const content = await rawResponse.json();
-    
-      console.log(content);
-    })();
-
-    console.log(formData);
+    const rawResponse = await fetch('http://localhost:8000/create_user', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+    const content = await rawResponse.json();
+    console.log(content);
   };
 
   return (
@@ -65,7 +60,7 @@ const UserForm = () => {
                     <input
                       name="name"
                       type="text"
-                      defaultValue={name}
+                      value={firstname}
                       onChange={onChange}
                       placeholder="Ingrese nombre de usuario"
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
@@ -80,7 +75,7 @@ const UserForm = () => {
                       name="lastName"
                       type="text"
                       placeholder="Ingrese apellido"
-                      defaultValue={lastName}
+                      value={lastname}
                       onChange={onChange}
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
@@ -108,7 +103,7 @@ const UserForm = () => {
                   <input
                     name="phoneNumber"
                     type="number"
-                    defaultValue={phoneNumber}
+                    defaultValue={cellphone}
                     onChange={onChange}
                     placeholder="Ingrese el numero de celular"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
@@ -116,33 +111,33 @@ const UserForm = () => {
                 </div>
                 <div className="mb-4.5">
                   <div className="w-full xl:w-1/2">
-                      <label className="mb-2.5 block text-black dark:text-white">
-                        Direccion
-                      </label>
-                      <input
-                        name="address"
-                        type="text"
-                        defaultValue={address}
-                        onChange={onChange}
-                        placeholder="Ingrese la direccion"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                      />
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Direccion
+                    </label>
+                    <input
+                      name="address"
+                      type="text"
+                      defaultValue={address}
+                      onChange={onChange}
+                      placeholder="Ingrese la direccion"
+                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    />
                   </div>
                 </div>
 
                 <div className="mb-4.5">
                   <div className="w-full xl:w-1/2">
-                      <label className="mb-2.5 block text-black dark:text-white">
-                        Contraseña
-                      </label>
-                      <input
-                        name="password"
-                        type="password"
-                        defaultValue={password}
-                        onChange={onChange}
-                        placeholder="Ingrese la contraseña"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                      />
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Contraseña
+                    </label>
+                    <input
+                      name="password"
+                      type="password"
+                      value={password}
+                      onChange={onChange}
+                      placeholder="Ingrese la contraseña"
+                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    />
                   </div>
                 </div>
 
@@ -152,9 +147,10 @@ const UserForm = () => {
                   </label>
                   <div className="relative z-20 bg-transparent dark:bg-form-input">
                     <select
-                    defaultValue={roleId}
-                    name="roleId"
-                    className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary">
+                      defaultValue={roleId}
+                      name="roleId"
+                      className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    >
                       <option value="1">Egresado</option>
                       <option value="2">Profesor</option>
                       <option value="3">Admin</option>
