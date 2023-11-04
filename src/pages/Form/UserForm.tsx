@@ -6,9 +6,10 @@ const UserForm = () => {
     firstname: '',
     lastname: '',
     email: '',
-    cellphone: '',
+    cellphone: 0,
     address: '',
     password: '',
+    status: 1,
     roleId: 1,
   };
 
@@ -60,7 +61,7 @@ const UserForm = () => {
                     <input
                       name="name"
                       type="text"
-                      value={firstname}
+                      defaultValue={firstname}
                       onChange={onChange}
                       placeholder="Ingrese nombre de usuario"
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
@@ -75,7 +76,7 @@ const UserForm = () => {
                       name="lastName"
                       type="text"
                       placeholder="Ingrese apellido"
-                      value={lastname}
+                      defaultValue={lastname}
                       onChange={onChange}
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
@@ -101,7 +102,7 @@ const UserForm = () => {
                     Celular
                   </label>
                   <input
-                    name="phoneNumber"
+                    name="cellphone"
                     type="number"
                     defaultValue={cellphone}
                     onChange={onChange}

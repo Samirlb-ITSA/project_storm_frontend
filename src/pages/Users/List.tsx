@@ -23,10 +23,10 @@ const List = () => {
                 Correo Electronico
               </th>
               <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                Invoice date
+                Direcion
               </th>
               <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                Status
+                Estado
               </th>
               <th className="py-4 px-4 font-medium text-black dark:text-white">
                 Acciones
@@ -42,11 +42,11 @@ const List = () => {
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                  <p className="text-black dark:text-white">Jan 13,2023</p>
+                  <p className="text-black dark:text-white">{user.address}</p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
-                    Paid
+                    Activo
                   </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

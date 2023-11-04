@@ -35,12 +35,12 @@ const coreRoutes = [
     component: FormElements,
   },
   {
-    path: '/forms/user-form',
+    path: '/dashboard/users/create',
     title: 'Usuario',
     component: UserForm,
   },
   {
-    path: '/users/list',
+    path: '/dashboard/users/list',
     title: 'Usuario',
     component: Users,
   },
