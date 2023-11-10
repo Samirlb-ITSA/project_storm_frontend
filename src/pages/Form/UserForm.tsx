@@ -1,5 +1,6 @@
 import Breadcrumb from '../../components/Breadcrumb';
 import { useState } from 'react';
+import { apiClient } from '../../js/apiClient';
 
 const UserForm = () => {
   let User = {
@@ -26,13 +27,13 @@ const UserForm = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const rawResponse = await fetch('http://localhost:8000/create_user', {
+    const rawResponse = await apiClient('create_user', {
       method: 'POST',
+      body: formData,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData),
     });
     const content = await rawResponse.json();
     console.log(content);

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import {useDropzone} from 'react-dropzone'
 import bgimage from '../images/icon/icon-arrow-down.svg'
 import * as XLSX from 'xlsx';
+import { apiClient } from '../js/apiClient'; // adjust the path to your apiClient function
 
 interface UploadUsersProps {
   file: string | ArrayBuffer | null,
@@ -16,19 +17,14 @@ interface UploadUsersProps {
 const UploadUsers: React.FC<UploadUsersProps> = ({file, setFile, isPending, setIsPending, url, setUrl, setError}) => {
     const [successCount, setSuccessCount] = useState(0);
     const [failureCount, setFailureCount] = useState(0);
-
     const createUser = async(user: any) => {
        setError(false)
        setIsPending(true)
        try{
-           const res = await fetch('http://localhost:8000/create_user',{
-           method : 'POST',
-           headers: {
-             Accept: 'application/json',
-             'Content-Type': 'application/json',
-           },
-           body : JSON.stringify(user),
-           })
+           const res = await apiClient('create_user', {
+             method: 'POST',
+             body: user,
+           });
            if(!res.ok){
             throw Error('Internal Server Error')
            }

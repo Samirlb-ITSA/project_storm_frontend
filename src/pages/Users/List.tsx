@@ -1,17 +1,34 @@
 import { useEffect, useState } from "react";
+import Skeleton from 'react-loading-skeleton'; // or your preferred skeleton library
+import { apiClient } from '../../js/apiClient'; // adjust the path to your apiClient function
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const List = () => {
   const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const rawResponse = await fetch('http://localhost:8000/get_users');
-      const content = await rawResponse.json();
-      
-      setUsers(content.resultado);
-      
+      try {
+        const content = await apiClient('get_users', { method: 'GET' });
+        setUsers(content.resultado);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     })();
   }, []);
+
+  if (isLoading) {
+    return(
+    <div className="h-ful min-h-">
+      <Skeleton className="w-full h-12 mb-5" />
+      <Skeleton className="w-full h-12 mb-3" count={20}  />
+    </div>
+    )
+
+  }
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">

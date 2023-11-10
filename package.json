@@ -1,5 +1,5 @@
 {
-  "name": "tailadmin-react-free",
+  "name": "project-storm-frontend",
   "private": true,
   "version": "1.0.5",
   "type": "module",
@@ -8,14 +8,10 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "author": {
-    "name": "TailAdmin",
-    "email": "hello@tailadmin.com",
-    "url": "https://tailadmin.com"
-  },
   "dependencies": {
     "@types/xlsx": "^0.0.36",
     "apexcharts": "^3.41.0",
+    "dotenv": "^16.3.1",
     "exceljs": "^4.4.0",
     "headlessui": "^0.0.0",
     "jsvectormap": "^1.5.3",
@@ -27,6 +23,7 @@
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.10.1",
+    "react-loading-skeleton": "^3.3.1",
     "react-router-dom": "^6.14.2",
     "react-toastify": "^9.1.3",
     "sort-by": "^0.0.2",
