@@ -8,16 +8,15 @@ interface Config {
 }
 
 export async function apiClient(endpoint: string, {body, method, session, ...customConfig}: Config = {}) {
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(session ? { 'Authorization': `Bearer ${session}` } : {}),
-    ...customConfig.headers,
-  };
+  const token = session ? session : {}
 
   const config: Config & { body?: string } = {
     method: method ? method : body ? 'POST' : 'GET',
-    ...customConfig,
-    headers,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
   };
 
   if (body) {
