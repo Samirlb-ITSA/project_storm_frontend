@@ -1,33 +1,35 @@
 import { useEffect, useState } from "react";
-import Skeleton from 'react-loading-skeleton'; // or your preferred skeleton library
-import { apiClient } from '../../js/apiClient'; // adjust the path to your apiClient function
+import Skeleton from 'react-loading-skeleton';
+import { apiClient } from '../../js/apiClient';
 import 'react-loading-skeleton/dist/skeleton.css'
+import toast from 'react-hot-toast';
 
 const List = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const ApiClient = apiClient();
 
   useEffect(() => {
+    setIsLoading(true);
     (async () => {
       try {
-        const content = await apiClient('get_users', { method: 'GET' });
+        const content = await ApiClient('get_users', { method: 'GET' });
         setUsers(content.resultado);
       } catch (error) {
-        console.error(error);
+        toast.error(String(error));
       } finally {
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [apiClient]);
 
   if (isLoading) {
-    return(
-    <div className="h-ful min-h-">
-      <Skeleton className="w-full h-12 mb-5" />
-      <Skeleton className="w-full h-12 mb-3" count={20}  />
-    </div>
-    )
-
+    return (
+      <div className="h-ful min-h-">
+        <Skeleton className="w-full h-12 mb-5" />
+        <Skeleton className="w-full h-12 mb-3" count={20}  />
+      </div>
+    );
   }
 
   return (
@@ -52,7 +54,7 @@ const List = () => {
           </thead>
           <tbody>
             {users.map((user: any) => (
-              <tr>
+              <tr key={user.userid}>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
                     {user.email}

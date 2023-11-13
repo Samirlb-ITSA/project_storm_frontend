@@ -1,34 +1,45 @@
+import { useCallback } from 'react';
+import useAuthStore from '../stores/AuthStore';
+
 const serverUrl = import.meta.env.VITE_BACKEND_BASE_URL;
 
 interface Config {
   body?: any;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   headers?: Record<string, string>;
-  session?: string;
 }
 
-export async function apiClient(endpoint: string, {body, method, session}: Config = {}) {
-  const token = session ? session : {}
+export function apiClient() {
+  const { logout, session } = useAuthStore();
 
-  const config: Config & { body?: string } = {
-    method: method ? method : body ? 'POST' : 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  };
+  const apiClient = useCallback(async (endpoint: string, {body, method}: Config = {}) => {
+    const token = session ? session : {};
+    const config: Config & { body?: string } = {
+      method: method ? method : body ? 'POST' : 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    };
 
-  if (body) {
-    config.body = JSON.stringify(body);
-  }
+    if (body) {
+      config.body = JSON.stringify(body);
+    }
 
-  const response = await fetch(`${serverUrl}/${endpoint}`, config);
-  const data = await response.json();
+    const response = await fetch(`${serverUrl}/${endpoint}`, config);
+    const data = await response.json();
+    if (response.status === 401) {
+      logout();
+      window.location.href = '/auth/signin';
+    }
 
-  if (response.ok) {
+    if (!response.ok) {
+      return Promise.reject(data);
+    }
+
     return data;
-  } else {
-    return Promise.reject(data);
-  }
+  }, [logout, session]);
+
+  return apiClient;
 }

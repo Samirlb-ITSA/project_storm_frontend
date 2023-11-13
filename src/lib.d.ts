@@ -3,7 +3,6 @@ declare module '*.svg' {
   export default content;
 }
 
-
 interface ImportMetaEnv {
   VITE_BACKEND_BASE_URL?: string;
   // more env variables...
