@@ -26,16 +26,13 @@ const useAuthStore = create(
         if (!email) return Promise.reject(new Error("Email is required"));
         if (!password) return Promise.reject(new Error("Password is required"));
 
-        const response = await fetch(serverUrl + "/login", {
+        const response = await fetch("http://localhost:8000/login", {
           method: "POST",
           body: new URLSearchParams(`username=${email}&password=${password}`),
         });
         const data = await response.json();
-
         if (data.detail) return Promise.resolve(data);
-
         set({ session: data.access_token });
-
         return Promise.resolve(data);
       },
       logout: async () => {
@@ -47,5 +44,6 @@ const useAuthStore = create(
     }
   )
 );
+
 
 export default useAuthStore;

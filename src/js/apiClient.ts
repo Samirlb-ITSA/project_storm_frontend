@@ -7,7 +7,7 @@ interface Config {
   session?: string;
 }
 
-export async function apiClient(endpoint: string, {body, method, session, ...customConfig}: Config = {}) {
+export async function apiClient(endpoint: string, {body, method, session}: Config = {}) {
   const token = session ? session : {}
 
   const config: Config & { body?: string } = {
