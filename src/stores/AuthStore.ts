@@ -26,7 +26,7 @@ const useAuthStore = create(
         if (!email) return Promise.reject(new Error("Email is required"));
         if (!password) return Promise.reject(new Error("Password is required"));
 
-        const response = await fetch("http://localhost:8000/login", {
+        const response = await fetch("https://project-storm-backend.onrender.com/login", {
           method: "POST",
           body: new URLSearchParams(`username=${email}&password=${password}`),
         });
