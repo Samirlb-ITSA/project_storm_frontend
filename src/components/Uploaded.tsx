@@ -1,20 +1,24 @@
 interface UploadedProps {
-  summary: { users_created: number, users_failed: number } | null;
+  summary: { users_created: UserSummary[], users_failed: UserSummary[] } | null;
+}
+export interface UserSummary {
+  email: string;
+  position: number;
 }
 
 const Uploaded: React.FC<UploadedProps> = ({ summary }) => {
   return (
     <div className='flex flex-col h-[50vh] drop-shadow-lg p-5 justify-between bg-white w-4/5 md:w-1/3 sm:w-5/6 rounded-md'>
+      {/* ... */}
       <div>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-10 h-10 mx-auto fill-white bg-green p-2 rounded-full">
-          <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clipRule="evenodd" />
-        </svg>
-
-        <p className='font-normal text-md sm:text-xl text-center'>Upload Completed!</p>
-      </div>
-      <div>
-        <p>Users created: {summary?.users_created}</p>
-        <p>Users failed: {summary?.users_failed}</p>
+        <p>Users created:</p>
+        {summary?.users_created.map(user => (
+          <p key={user.position}>{user.email} = {user.position}</p>
+        ))}
+        <p>Users failed:</p>
+        {summary?.users_failed.map(user => (
+          <p key={user.position}>{user.email} = {user.position}</p>
+        ))}
       </div>
     </div>
   )

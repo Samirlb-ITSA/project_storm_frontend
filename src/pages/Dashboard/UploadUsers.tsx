@@ -2,11 +2,12 @@ import { useState } from 'react';
 import UploadUsersProps from '../../components/UploadForm'
 import Pending from '../../components/PendingUpload'
 import Uploaded from '../../components/Uploaded';
+import { UserSummary } from '../../components/Uploaded'; 
 
 function UploadUsers() {
   const [isPending , setIsPending] = useState(false)
   const [file , setFile] = useState<File | null>(null)
-  const [summary, setSummary] = useState<{ users_created: number, users_failed: number } | null>(null);
+  const [summary, setSummary] = useState<{ users_created: UserSummary[], users_failed: UserSummary[] } | null>(null);
   const [url , setUrl] = useState<string | null>(null)
   const [error , setError] = useState(false)
 
