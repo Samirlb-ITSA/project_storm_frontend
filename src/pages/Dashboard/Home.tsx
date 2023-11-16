@@ -50,12 +50,21 @@ const Statistics = () => {
           updatesPercentage={statistics["new_users_percentage_last_month"]+ "%"}
         />
 
+        
+        <Card  
+            value={statistics["active_job_offers_per_user"]}
+            title="Ofertas activas"
+            imageName="activeJobOffer"
+            hasUpdates={statistics["new_job_offers_percentage_last_month"] != "0"}
+            updatesPercentage={statistics["new_job_offers_percentage_last_month"]+ "%"}
+        />
+
         <Card  
             value={statistics["total_job_offers"]}
             title="Ofertas totales"
-            imageName="shop"
-            hasUpdates={statistics["new_users_percentage_last_month"] != "0"}
-            updatesPercentage={statistics["new_users_percentage_last_month"]+ "%"}
+            imageName="jobOffer"
+            hasUpdates={false}
+            updatesPercentage={""}
           />
       </div>
 
