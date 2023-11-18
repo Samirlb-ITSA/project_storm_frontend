@@ -7,6 +7,7 @@ const Dashboard = lazy(() => import('../pages/Dashboard/Home'));
 const FormElements = lazy(() => import('../pages/Form/FormElements'));
 const UserForm = lazy(() => import('../pages/Form/UserForm'));
 const Users = lazy(() => import('../pages/Users/List'));
+const CompanyForm = lazy(() => import('../pages/Form/CompanyForm'));
 const Profile = lazy(() => import('../pages/Profile'));
 const Settings = lazy(() => import('../pages/Settings'));
 const Tables = lazy(() => import('../pages/Tables'));
@@ -44,6 +45,11 @@ const coreRoutes = [
     path: '/dashboard/users/list',
     title: 'Lista de usuarios',
     component: Users,
+  },
+  {
+    path: '/dashboard/companies/create',
+    title: 'Crear Empresa',
+    component: CompanyForm,
   },
   {
     path: '/dashboard/users/upload',
