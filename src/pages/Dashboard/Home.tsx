@@ -42,7 +42,7 @@ const Statistics = () => {
   return (
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
-        <Card  
+        <Card
           value={statistics["total_users"]}
           title="Usuarios totales"
           imageName="users"
@@ -50,8 +50,7 @@ const Statistics = () => {
           updatesPercentage={statistics["new_users_percentage_last_month"]+ "%"}
         />
 
-        
-        <Card  
+        <Card
             value={statistics["active_job_offers_per_user"]}
             title="Ofertas activas"
             imageName="activeJobOffer"
@@ -59,17 +58,25 @@ const Statistics = () => {
             updatesPercentage={statistics["new_job_offers_percentage_last_month"]+ "%"}
         />
 
-        <Card  
+        <Card
             value={statistics["total_job_offers"]}
             title="Ofertas totales"
             imageName="jobOffer"
             hasUpdates={false}
             updatesPercentage={""}
           />
+
+        <Card
+            value={statistics["total_companies"]}
+            title="Compañias totales"
+            imageName="company"
+            hasUpdates={false}
+            updatesPercentage={""}
+          />
       </div>
 
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <ChartOne />
+        <ChartOne statistics={statistics} />
         <ChartTwo />
         <ChartThree />
         <MapOne />
