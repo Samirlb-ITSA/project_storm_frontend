@@ -7,13 +7,13 @@ import toast from 'react-hot-toast';
 const List = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const ApiClient = apiClient();
+  const apiService = apiClient();
 
   useEffect(() => {
     setIsLoading(true);
     (async () => {
       try {
-        const content = await ApiClient('get_users', { method: 'GET' });
+        const content = await apiService('get_users', { method: 'GET' });
         setUsers(content.resultado);
       } catch (error) {
         toast.error(String(error));
