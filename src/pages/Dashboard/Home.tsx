@@ -44,7 +44,7 @@ const Statistics = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-4 xl:grid-cols-4 2xl:gap-7.5">
         <Card
           value={userStatistics["total_users"]}
           title="Usuarios totales"
@@ -78,7 +78,7 @@ const Statistics = () => {
           />
       </div>
 
-      <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
+      <div className="mt-3 grid grid-cols-12 gap-4 md:mt-5 md:gap-4 2xl:mt-7.5 2xl:gap-7.5">
         <ChartOne statistics={jobStatistics} />
         <ChartTwo />
         <ChartThree />
