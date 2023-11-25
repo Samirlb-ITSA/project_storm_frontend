@@ -14,23 +14,26 @@ import TableOne from '../../components/TableOne.tsx';
 const Statistics = () => {
   const apiService = apiClient();
   const [isLoading, setIsLoading] = useState(true);
-  const [statistics, setStatistics] = useState()
+  const [userStatistics, setUserStatistics] = useState()
+  const [jobStatistics, setJobStatistics] = useState()
 
   useEffect(() => {
     setIsLoading(true);
     (async () => {
       try {
-        const content = await apiService('statistics', { method: 'GET' });
-        setStatistics(content)
+        const userStatisticsContent = await apiService('statistics/user', { method: 'GET' });
+        setUserStatistics(userStatisticsContent)
+        const jobStatisticsContent = await apiService('statistics/job', { method: 'GET' });
+        setJobStatistics(jobStatisticsContent)
       } catch (error) {
         toast.error(String(error));
       } finally {
         setIsLoading(false);
       }
     })();
-  }, [apiClient]);
+  }, []);
 
-  if (isLoading || !statistics) {
+  if (isLoading || !userStatistics || !jobStatistics) {
     return (
       <div className="h-ful min-h-">
         <Skeleton className="w-full h-12 mb-5" />
@@ -43,23 +46,23 @@ const Statistics = () => {
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         <Card
-          value={statistics["total_users"]}
+          value={userStatistics["total_users"]}
           title="Usuarios totales"
           imageName="users"
-          hasUpdates={statistics["new_users_percentage_last_month"] != "0"}
-          updatesPercentage={statistics["new_users_percentage_last_month"]+ "%"}
+          hasUpdates={userStatistics["new_users_last_month"] != "0"}
+          updatesPercentage={userStatistics["new_users_last_month"]+ "%"}
         />
 
         <Card
-            value={statistics["active_job_offers_per_user"]}
+            value={jobStatistics["active_job_offers"]}
             title="Ofertas activas"
             imageName="activeJobOffer"
-            hasUpdates={statistics["new_job_offers_percentage_last_month"] != "0"}
-            updatesPercentage={statistics["new_job_offers_percentage_last_month"]+ "%"}
+            hasUpdates={jobStatistics["new_job_offers_last_month"] != "0"}
+            updatesPercentage={jobStatistics["new_job_offers_last_month"]+ "%"}
         />
 
         <Card
-            value={statistics["total_job_offers"]}
+            value={jobStatistics["total_job_offers"]}
             title="Ofertas totales"
             imageName="jobOffer"
             hasUpdates={false}
@@ -67,7 +70,7 @@ const Statistics = () => {
           />
 
         <Card
-            value={statistics["total_companies"]}
+            value={jobStatistics["total_companies"]}
             title="Compañias totales"
             imageName="company"
             hasUpdates={false}
@@ -76,7 +79,7 @@ const Statistics = () => {
       </div>
 
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <ChartOne statistics={statistics} />
+        <ChartOne statistics={jobStatistics} />
         <ChartTwo />
         <ChartThree />
         <MapOne />
