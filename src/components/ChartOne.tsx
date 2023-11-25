@@ -173,7 +173,7 @@ const ChartOne: React.FC<ChartOneProps> = ({ statistics }) => {
             options={options}
             series={state.series}
             type="area"
-            height={350}
+            height={300}
           />
         </div>
       </div>
