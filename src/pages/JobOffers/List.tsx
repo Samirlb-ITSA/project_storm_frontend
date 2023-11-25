@@ -5,7 +5,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import toast from 'react-hot-toast';
 
 const List = () => {
-  const [users, setUsers] = useState([]);
+  const [joboffers, setJoboffers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const apiService = apiClient();
 
@@ -13,8 +13,8 @@ const List = () => {
     setIsLoading(true);
     (async () => {
       try {
-        const content = await apiService('get_users', { method: 'GET' });
-        setUsers(content.resultado);
+        const content = await apiService('get_job_offers', { method: 'GET' });
+        setJoboffers(content.resultado);
       } catch (error) {
         toast.error(String(error));
       } finally {
@@ -42,38 +42,29 @@ const List = () => {
                 Nombre
               </th>
               <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                Correo Electronico
-              </th>
-              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                Direcion
+                Horario
               </th>
               <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                 Estado
               </th>
-              <th className="py-4 px-4 font-medium text-black dark:text-white">
-                Acciones
-              </th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user: any) => (
-              <tr key={user.userid}>
+            {joboffers.map((joboffer: any) => (
+              <tr key={joboffer.offerid}>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
-                    {user.firstname +" "+ user.lastname}
+                    {joboffer.name}
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
-                    {user.email}
+                    {joboffer.workday}
                   </h5>
-                </td>
-                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                  <p className="text-black dark:text-white">{user.address}</p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
-                    Activo
+                  {joboffer.status}
                   </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
