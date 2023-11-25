@@ -53,6 +53,7 @@ const UserForm = () => {
             <form onSubmit={onSubmit}>
               <div className="p-6.5">
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                  
                   <div className="w-full xl:w-1/2">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Nombre
@@ -80,36 +81,42 @@ const UserForm = () => {
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
                   </div>
+
                 </div>
 
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Correo electronico <span className="text-meta-1">*</span>
-                  </label>
-                  <input
-                    name="email"
-                    type="email"
-                    placeholder="Ingrese el correo electronico"
-                    defaultValue={email}
-                    onChange={onChange}
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                  />
+                <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+
+                  <div className="w-full xl:w-1/2">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Correo electronico <span className="text-meta-1">*</span>
+                    </label>
+                    <input
+                      name="email"
+                      type="email"
+                      placeholder="Ingrese el correo electronico"
+                      defaultValue={email}
+                      onChange={onChange}
+                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    />
+                  </div>
+
+                  <div className="w-full xl:w-1/2">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Contraseña
+                    </label>
+                    <input
+                      name="password"
+                      type="password"
+                      value={password}
+                      onChange={onChange}
+                      placeholder="Ingrese la contraseña"
+                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    />
+                  </div>
                 </div>
 
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Celular
-                  </label>
-                  <input
-                    name="cellphone"
-                    type="number"
-                    defaultValue={cellphone}
-                    onChange={onChange}
-                    placeholder="Ingrese el numero de celular"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                  />
-                </div>
-                <div className="mb-4.5">
+                <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+
                   <div className="w-full xl:w-1/2">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Direccion
@@ -123,19 +130,17 @@ const UserForm = () => {
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
                   </div>
-                </div>
 
-                <div className="mb-4.5">
                   <div className="w-full xl:w-1/2">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Contraseña
+                      Celular
                     </label>
                     <input
-                      name="password"
-                      type="password"
-                      value={password}
+                      name="cellphone"
+                      type="number"
+                      defaultValue={cellphone}
                       onChange={onChange}
-                      placeholder="Ingrese la contraseña"
+                      placeholder="Ingrese el numero de celular"
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
                   </div>

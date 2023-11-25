@@ -5,7 +5,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import toast from 'react-hot-toast';
 
 const List = () => {
-  const [users, setUsers] = useState([]);
+  const [companies, setcompanies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const apiService = apiClient();
 
@@ -13,8 +13,8 @@ const List = () => {
     setIsLoading(true);
     (async () => {
       try {
-        const content = await apiService('get_users', { method: 'GET' });
-        setUsers(content.resultado);
+        const content = await apiService('get_companies', { method: 'GET' });
+        setcompanies(content.resultado);
       } catch (error) {
         toast.error(String(error));
       } finally {
@@ -56,20 +56,20 @@ const List = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user: any) => (
-              <tr key={user.userid}>
+            {companies.map((company: any) => (
+              <tr key={company.companyid}>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
-                    {user.firstname +" "+ user.lastname}
+                    {company.name}
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
-                    {user.email}
+                    {company.email}
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                  <p className="text-black dark:text-white">{user.address}</p>
+                  <p className="text-black dark:text-white">{company.address}</p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
