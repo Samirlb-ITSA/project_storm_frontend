@@ -42,9 +42,6 @@ const Statistics = () => {
     );
   }
 
-  const rolesCountData = Object.values(userStatistics["roles_count"] || {}).map(count => Number(count));
-  const rolesNames = Object.keys(userStatistics["roles_count"] || {});
-
   return (
     <>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-5 xl:grid-cols-4 2xl:gap-5">
@@ -83,12 +80,13 @@ const Statistics = () => {
 
       <div className="mt-3 grid grid-cols-12 gap-3 md:mt-5 md:gap-5 2xl:mt-5 2xl:gap-5">
         <ChartOne statistics={jobStatistics} />
-        <ChartTwo />
         <ChartThree rolesCount={userStatistics["roles_count"] || {}} totalUsers={userStatistics["total_users"]}/>
-        <MapOne />
         <div className="col-span-12 xl:col-span-8">
           <TableOne />
         </div>
+        <ChartTwo />
+        <MapOne />
+
         <ChatCard />
       </div>
     </>
