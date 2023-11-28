@@ -7,7 +7,16 @@ const Dashboard = lazy(() => import('../pages/Dashboard/Home'));
 const FormElements = lazy(() => import('../pages/Form/FormElements'));
 const UserForm = lazy(() => import('../pages/Form/UserForm'));
 const Users = lazy(() => import('../pages/Users/List'));
+
 const CompanyForm = lazy(() => import('../pages/Form/CompanyForm'));
+const Company = lazy(() => import('../pages/Companies/List'));
+
+const RolForm = lazy(() => import('../pages/Form/RolForm'));
+const Roles = lazy(() => import('../pages/Roles/List'));
+
+const JobOffersForm = lazy(() => import('../pages/Form/JobOffersForm'));
+const JobOffers = lazy(() => import('../pages/JobOffers/List'));
+
 const Profile = lazy(() => import('../pages/Profile'));
 const Settings = lazy(() => import('../pages/Settings'));
 const Tables = lazy(() => import('../pages/Tables'));
@@ -36,6 +45,7 @@ const coreRoutes = [
     title: 'Forms Elements',
     component: FormElements,
   },
+  //Users Routes
   {
     path: '/dashboard/users/create',
     title: 'Crear usuario',
@@ -47,15 +57,44 @@ const coreRoutes = [
     component: Users,
   },
   {
+    path: '/dashboard/users/upload',
+    title: 'Importar usuarios',
+    component: UploadUsers,
+  },
+  //Companies Routes
+  {
     path: '/dashboard/companies/create',
     title: 'Crear Empresa',
     component: CompanyForm,
   },
   {
-    path: '/dashboard/users/upload',
-    title: 'Importar usuarios',
-    component: UploadUsers,
+    path: '/dashboard/companies/list',  
+    title: 'Lista de empresas',
+    component: Company,
   },
+  //Roles Routes
+  {
+    path: '/dashboard/roles/create',
+    title: 'Crear Roles',
+    component: RolForm,
+  },
+  {
+    path: '/dashboard/roles/list',  
+    title: 'Lista de roles',
+    component: Roles,
+  },
+  //JobOffers Routes
+  {
+    path: '/dashboard/job_offers/create',
+    title: 'Crear Ofertas Laborales',
+    component: JobOffersForm,
+  },
+  {
+    path: '/dashboard/job_offers/list',  
+    title: 'Lista de Ofertas Laborales',
+    component: JobOffers,
+  },
+  //Other Routes
   {
     path: '/tables',
     title: 'Tables',
