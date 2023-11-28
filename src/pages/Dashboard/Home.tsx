@@ -10,12 +10,14 @@ import ChartTwo from '../../components/ChartTwo.tsx';
 import ChatCard from '../../components/ChatCard.tsx';
 import MapOne from '../../components/MapOne.tsx';
 import TableOne from '../../components/TableOne.tsx';
+import DataStats from "../../components/DataStats.tsx";
 
 const Statistics = () => {
   const apiService = apiClient();
   const [isLoading, setIsLoading] = useState(true);
   const [userStatistics, setUserStatistics] = useState()
   const [jobStatistics, setJobStatistics] = useState()
+  const [companyStatistics, setCompanyStatistics] = useState()
 
   useEffect(() => {
     setIsLoading(true);
@@ -25,6 +27,8 @@ const Statistics = () => {
         setUserStatistics(userStatisticsContent)
         const jobStatisticsContent = await apiService('statistics/job', { method: 'GET' });
         setJobStatistics(jobStatisticsContent)
+        const companyStatisticsContent = await apiService('statistics/company', { method: 'GET' });
+        setCompanyStatistics(companyStatisticsContent)
       } catch (error) {
         toast.error(String(error));
       } finally {
@@ -81,13 +85,9 @@ const Statistics = () => {
       <div className="mt-3 grid grid-cols-12 gap-3 md:mt-5 md:gap-5 2xl:mt-5 2xl:gap-5">
         <ChartOne statistics={jobStatistics} />
         <ChartThree rolesCount={userStatistics["roles_count"] || {}} totalUsers={userStatistics["total_users"]}/>
-        <div className="col-span-12 xl:col-span-8">
-          <TableOne />
+        <div className="col-span-12 xl:col-span-12">
+          {companyStatistics && <TableOne companies={companyStatistics["companies"]} />}
         </div>
-        <ChartTwo />
-        <MapOne />
-
-        <ChatCard />
       </div>
     </>
   );
