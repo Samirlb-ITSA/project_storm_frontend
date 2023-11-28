@@ -1,40 +1,139 @@
-import Breadcrumb from '../../components/Breadcrumb';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { apiClient } from '../../js/apiClient';
+import Breadcrumb from '../../components/Breadcrumb';
+import Select from 'react-select';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
+interface RoleOption {
+  value: string;
+  label: string;
+}
 
 const UserForm = () => {
+  const navigate = useNavigate();
   const dataRequester = apiClient();
-  let User = {
+  let User: { [key: string]: string | number } = {
     firstname: '',
     lastname: '',
     email: '',
     cellphone: 0,
     address: '',
     password: '',
-    status: 1,
-    roleId: 1,
+    status: '',
   };
 
   const [formData, setFormData] = useState(User);
-  const { firstname, lastname, email, cellphone, address, password, roleId } =
-    formData;
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({});
+  const [selectedRoles, setSelectedRoles] = useState<RoleOption[]>([]);
+  const [roles, setRoles] = useState<RoleOption[]>([]); // Declare roles state variable
+  const { firstname, lastname, email, cellphone, address, password, status } = formData;
+  
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await dataRequester('get_roles', { method: 'GET' });
+        const data = await response.resultado;
+        console.log(data)
+        setRoles(data.map((role: { roleid: string; name: string }) => ({  value: role.roleid, label: role.name } )));
+      } catch (error) {
+        console.error('Failed to fetch roles:', error);
+      }
+    };
+  
+    fetchRoles();
+  }, []);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const validateField = (name: string, value: string | RoleOption[]) => {
+    let error: string | undefined;
+    switch (name) {
+      case 'firstname':
+        error = value ? undefined : 'El nombre es obligatorio';
+        break;
+      case 'lastname':
+        error = value ? undefined : 'El apellido es obligatorio';
+        break;
+      case 'email':
+        error = value ? (/\S+@\S+\.\S+/.test(value as string) ? undefined : 'El correo electrónico no es válido') : 'El correo electrónico es obligatorio';
+        break;
+      case 'password':
+        error = value ? undefined : 'La contraseña es obligatoria';
+        break;
+      case 'cellphone':
+        error = value ? undefined : 'El numero de celular es obligatorio';
+        error = value ? (!isNaN(+value) ? undefined : 'El numero de celular no es válido') : 'El correo electrónico es obligatorio';
+        break;
+      case 'address':
+        error = value ? undefined : 'La dirección es obligatoria';
+        break;
+      case 'status':
+        error = value ? undefined : 'El estado es obligatorio';
+        break;
+      case 'roles':
+        console.log((value as RoleOption[]).length)
+        error = (value as RoleOption[]).length > 0 ? undefined : 'El rol es obligatorio';
+        break;
+      default:
+          break;
+      }
+      return error;
+    };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
+    const error = validateField(name, value);
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
   };
+
+  const handleRoleChange = (selectedOptions: readonly RoleOption[] | null) => {
+    setSelectedRoles(Array.from(selectedOptions || []));
+    const error = validateField('roles', selectedOptions as RoleOption[]);
+    setErrors((prevErrors) => ({ ...prevErrors, roles: error }));
+  };
+
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const rawResponse = await dataRequester('create_user', {
-      method: 'POST',
-      body: formData,
+
+    let newErrors = { ...errors };
+
+    Object.keys(formData).forEach(key => {
+      const error = validateField(key, String(formData[key]));
+      newErrors[key] = error;
     });
-    const content = await rawResponse.json();
-    console.log(content);
+
+    const errorRoles = validateField('roles', selectedRoles);
+    newErrors['roles'] = errorRoles;
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).every((error) => error === undefined)) {
+      const rawResponse = await dataRequester('create_user', {
+        method: 'POST',
+        body: {
+          ...formData,
+          roleds: selectedRoles.map(role => ({
+            roleid: role.value,
+            name: role.label
+          })),
+        },
+      });
+      const result = rawResponse.result;
+      console.log(result);
+
+      if (result === 'Usuario creado') {
+        toast.success(String(result));
+        navigate("/dashboard/users/list");
+      }
+
+      if (result === 'Error al crear el usuario') {
+        toast.error(String(result));
+      } 
+    }
   };
 
   return (
@@ -56,30 +155,32 @@ const UserForm = () => {
                   
                   <div className="w-full xl:w-1/2">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Nombre
+                      Nombre <span className="text-meta-1">*</span>
                     </label>
                     <input
-                      name="name"
+                      name="firstname"
                       type="text"
                       defaultValue={firstname}
                       onChange={onChange}
                       placeholder="Ingrese nombre de usuario"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className={`w-full rounded border-[1.5px] ${errors.firstname ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
+                    {errors.firstname && <p className="text-danger">{errors.firstname}</p>}
                   </div>
 
                   <div className="w-full xl:w-1/2">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Apellido
+                      Apellido <span className="text-meta-1">*</span>
                     </label>
                     <input
-                      name="lastName"
+                      name="lastname"
                       type="text"
                       placeholder="Ingrese apellido"
                       defaultValue={lastname}
                       onChange={onChange}
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className={`w-full rounded border-[1.5px] ${errors.lastname ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
+                    {errors.lastname && <p className="text-danger">{errors.lastname}</p>}
                   </div>
 
                 </div>
@@ -96,13 +197,14 @@ const UserForm = () => {
                       placeholder="Ingrese el correo electronico"
                       defaultValue={email}
                       onChange={onChange}
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className={`w-full rounded border-[1.5px] ${errors.email ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
+                    {errors.email && <p className="text-danger">{errors.email}</p>}
                   </div>
 
                   <div className="w-full xl:w-1/2">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Contraseña
+                      Contraseña <span className="text-meta-1">*</span>
                     </label>
                     <input
                       name="password"
@@ -110,8 +212,9 @@ const UserForm = () => {
                       value={password}
                       onChange={onChange}
                       placeholder="Ingrese la contraseña"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className={`w-full rounded border-[1.5px] ${errors.password ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
+                    {errors.password && <p className="text-danger">{errors.password}</p>}
                   </div>
                 </div>
 
@@ -119,7 +222,7 @@ const UserForm = () => {
 
                   <div className="w-full xl:w-1/2">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Direccion
+                      Direccion <span className="text-meta-1">*</span>
                     </label>
                     <input
                       name="address"
@@ -127,58 +230,66 @@ const UserForm = () => {
                       defaultValue={address}
                       onChange={onChange}
                       placeholder="Ingrese la direccion"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className={`w-full rounded border-[1.5px] ${errors.address ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
+                    {errors.address && <p className="text-danger">{errors.address}</p>}
                   </div>
 
                   <div className="w-full xl:w-1/2">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Celular
+                      Celular <span className="text-meta-1">*</span>
                     </label>
                     <input
                       name="cellphone"
-                      type="number"
+                      type="text"
                       defaultValue={cellphone}
                       onChange={onChange}
                       placeholder="Ingrese el numero de celular"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className={`w-full rounded border-[1.5px] ${errors.cellphone ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
+                    {errors.cellphone && <p className="text-danger">{errors.cellphone}</p>}
                   </div>
                 </div>
-
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Rol
-                  </label>
-                  <div className="relative z-20 bg-transparent dark:bg-form-input">
+                
+                <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                  <div className="w-full xl:w-1/2">
+                      <label className="mb-2.5 block text-black dark:text-white">
+                        Rol <span className="text-meta-1">*</span>
+                      </label>
+                      <Select
+                        isMulti
+                        name="roles"
+                        options={roles}
+                        className={`basic-multi-select ${errors.roles ? 'border-danger' : 'border-stroke'}`}
+                        classNamePrefix={`select ${errors.status ? 'border-danger' : 'border-stroke'} `}
+                        onChange={handleRoleChange}
+                        value={selectedRoles}
+                        placeholder="Selecciona uno o varios roles"
+                        styles={{
+                          control: (baseStyles) => ({
+                            ...baseStyles,
+                            height: 51,
+                            borderColor: errors.status ? '#D34053' : '#E2E8F0',
+                            borderWidth: "1.5px",
+                          }),
+                        }}                      />
+                      {errors.roles && <p className="text-danger">{errors.roles}</p>}
+                    </div>
+                  <div className="w-full xl:w-1/2">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Estado <span className="text-meta-1">*</span>
+                    </label>
                     <select
-                      defaultValue={roleId}
-                      name="roleId"
-                      className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      name="status"
+                      defaultValue={status}
+                      onChange={onChange}
+                      className={`relative z-20 w-full rounded border-[1.5px] ${errors.status ? 'border-danger' : 'border-stroke'} appearance-none bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     >
-                      <option value="1">Egresado</option>
-                      <option value="2">Profesor</option>
-                      <option value="3">Admin</option>
+                      <option value="">Seleccione un estado</option>
+                      <option value="true">Activo</option>
+                      <option value="false">Desabilitado</option>
                     </select>
-                    <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
-                      <svg
-                        className="fill-current"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g opacity="0.8">
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
-                            fill=""
-                          ></path>
-                        </g>
-                      </svg>
-                    </span>
+                    {errors.status && <p className="text-danger">{errors.status}</p>}
                   </div>
                 </div>
 

@@ -6,11 +6,7 @@ import toast from 'react-hot-toast';
 import Card from '../../components/Card.tsx';
 import ChartOne from '../../components/ChartOne.tsx';
 import ChartThree from '../../components/ChartThree.tsx';
-import ChartTwo from '../../components/ChartTwo.tsx';
-import ChatCard from '../../components/ChatCard.tsx';
-import MapOne from '../../components/MapOne.tsx';
 import TableOne from '../../components/TableOne.tsx';
-import DataStats from "../../components/DataStats.tsx";
 
 const Statistics = () => {
   const apiService = apiClient();
