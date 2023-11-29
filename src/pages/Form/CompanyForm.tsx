@@ -1,38 +1,129 @@
 import Breadcrumb from '../../components/Breadcrumb';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { apiClient } from '../../js/apiClient';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
+interface Faculty {
+  name: string;
+  facultyid: string;
+}
+
+interface Company {
+  name: string;
+  email: string;
+  cellphone: string;
+  address: string;
+  nit: string;
+  status: boolean;
+}
 
 const CompanyForm = () => {
+  const navigate = useNavigate();
   const dataRequester = apiClient();
-  let Company = {
+  let initialCompany: Company = {
     name: '',
     email: '',
-    cellphone: 0,
+    cellphone: '',
     address: '',
-    nit: 0,
-    status: 1,
+    nit: '',
+    status: true,
   };
 
-  const [formData, setFormData] = useState(Company);
-  const { name, email, cellphone, address, nit } =
-    formData;
+  const [formData, setFormData] = useState<Company>(initialCompany);
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({});
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
+  const [selectedFacultiy, setelectedFacultiy] = useState<string | undefined>();
+  const { name, email, cellphone, address, nit } = formData;
+  
+  useEffect(() => {
+    const fetchFaculties = async () => {
+      const response = await dataRequester('get_faculties', {
+        method: 'GET',
+      });
+      const content = await response.resultado;
+      setFaculties(content);
+    };
+  
+    fetchFaculties();
+  }, []);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const validateField = (name: string, value: string) => {
+    let error: string | undefined;
+    switch (name) {
+      case 'name':
+        error = value ? undefined : 'El nombre es obligatorio';
+        break;
+      case 'email':
+        error = value ? (/\S+@\S+\.\S+/.test(value) ? undefined : 'El correo electrónico no es válido') : 'El correo electrónico es obligatorio';
+        break;
+      case 'cellphone':
+        error = value ? (!isNaN(+value) ? undefined : 'El numero de celular no es válido') : 'El numero de celular es obligatorio';
+        break;
+      case 'address':
+        error = value ? undefined : 'La dirección es obligatoria';
+        break;
+      case 'nit':
+        error = value ? (!isNaN(+value) ? undefined : 'El NIT no es válido') : 'El NIT es obligatorio';
+        break;
+      case 'faculty':
+        error = value ? undefined : 'La facultad es obligatoria';
+        break;
+      default:
+        break;
+    }
+    return error;
+  };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
+    const error = validateField(name, value);
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+
+    if (name == 'faculty') {
+      setelectedFacultiy(value)
+    }
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const rawResponse = await dataRequester('create_company', {
-      method: 'POST',
-      body: formData,
+
+    let newErrors = { ...errors };
+
+    Object.keys(formData).forEach(key => {
+      const error = validateField(key, String(formData[key as keyof Company]));
+      newErrors[key] = error;
     });
-    const content = await rawResponse.json();
-    console.log(content);
+
+    const error = validateField('faculty', String(faculties));
+    newErrors['faculty'] = error;
+
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).every((error) => error === undefined)) {
+      const rawResponse = await dataRequester('create_company', {
+        method: 'POST',
+        body: {
+          ...formData,
+          facultyid: selectedFacultiy,
+      }});
+      const result = rawResponse.result;
+      console.log(result);
+
+      if (result === 'Empresa creada') {
+        toast.success(String(result));
+        navigate("companies/list");
+      }
+
+      if (result === 'Error al crear la empresa') {
+        toast.error(String(result));
+      } 
+    }
   };
 
   return (
@@ -54,7 +145,7 @@ const CompanyForm = () => {
 
                   <div className="mb-4.5">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Nombre
+                      Nombre <span className="text-meta-1">*</span>
                     </label>
                     <input
                       name="name"
@@ -62,8 +153,9 @@ const CompanyForm = () => {
                       defaultValue={name}
                       onChange={onChange}
                       placeholder="Ingrese el nombre de la Empresa"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className={`w-full rounded border-[1.5px] ${errors.name ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
+                    {errors.name && <p className="text-danger">{errors.name}</p>}
                   </div>
 
                 <div className="mb-4.5">
@@ -76,14 +168,15 @@ const CompanyForm = () => {
                     placeholder="Ingrese el correo electronico"
                     defaultValue={email}
                     onChange={onChange}
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    className={`w-full rounded border-[1.5px] ${errors.email ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                   />
+                  {errors.email && <p className="text-danger">{errors.email}</p>}
                 </div>
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
 
                   <div className="w-full xl:w-1/2">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Direccion
+                      Direccion <span className="text-meta-1">*</span>
                     </label>
                     <input
                       name="address"
@@ -91,41 +184,61 @@ const CompanyForm = () => {
                       defaultValue={address}
                       onChange={onChange}
                       placeholder="Ingrese la direccion"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className={`w-full rounded border-[1.5px] ${errors.address ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
+                    {errors.address && <p className="text-danger">{errors.address}</p>}
                   </div>
 
                   <div className="w-full xl:w-1/2">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Celular
+                      Celular <span className="text-meta-1">*</span>
                     </label>
                     <input
                       name="cellphone"
-                      type="number"
+                      type="text"
                       defaultValue={cellphone}
                       onChange={onChange}
                       placeholder="Ingrese el numero de celular"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className={`w-full rounded border-[1.5px] ${errors.cellphone ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
+                    {errors.cellphone && <p className="text-danger">{errors.cellphone}</p>}
                   </div>
                 </div>
+                <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                  <div className="w-full xl:w-1/2">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Nit <span className="text-meta-1">*</span>
+                    </label>
+                    <input
+                      name="nit"
+                      type="text"
+                      defaultValue={nit}
+                      onChange={onChange}
+                      placeholder="Ingrese el numero del Nit de la empresa"
+                      className={`w-full rounded border-[1.5px] ${errors.nit ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                    />
+                    {errors.nit && <p className="text-danger">{errors.nit}</p>}
+                  </div>
 
-
-
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Nit
-                  </label>
-                  <input
-                    name="nit"
-                    type="number"
-                    defaultValue={nit}
-                    onChange={onChange}
-                    placeholder="Ingrese el numero del Nit de la empresa"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                  />
+                  <div className="w-full xl:w-1/2">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Facultad <span className="text-meta-1">*</span>
+                    </label>
+                    <select
+                      name="faculty"
+                      onChange={onChange}
+                      className={`relative z-20 w-full rounded border-[1.5px] ${errors.faculty ? 'border-danger' : 'border-stroke'} appearance-none bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                      >
+                      <option value="">Seleccione una facultad</option>
+                      {faculties.map((faculty) => (
+                        <option key={faculty.facultyid} value={faculty.facultyid}>
+                          {faculty.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.faculty && <p className="text-danger">{errors.faculty}</p>}
+                  </div>
                 </div>
-
                 <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray">
                   Crear Empresa
                 </button>

@@ -116,7 +116,7 @@ const UserForm = () => {
         method: 'POST',
         body: {
           ...formData,
-          roleds: selectedRoles.map(role => ({
+          roles: selectedRoles.map(role => ({
             roleid: role.value,
             name: role.label
           })),
@@ -127,7 +127,7 @@ const UserForm = () => {
 
       if (result === 'Usuario creado') {
         toast.success(String(result));
-        navigate("/dashboard/users/list");
+        navigate("users/list");
       }
 
       if (result === 'Error al crear el usuario') {
