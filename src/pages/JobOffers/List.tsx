@@ -50,8 +50,9 @@ const List = () => {
             </tr>
           </thead>
           <tbody>
-            {joboffers.map((joboffer: any) => (
-              <tr key={joboffer.offerid}>
+            {joboffers.length > 0 ? (
+              joboffers.map((joboffer: any) => (
+                <tr key={joboffer.offerid}>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
                     {joboffer.name}
@@ -137,7 +138,14 @@ const List = () => {
                   </div>
                 </td>
               </tr>
-            ))}
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="text-center py-5">
+                  No hay ofertas laborales disponibles
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
