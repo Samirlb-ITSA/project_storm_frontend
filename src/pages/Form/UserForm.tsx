@@ -22,11 +22,22 @@ const UserForm = () => {
     password: '',
     status: '',
   };
-
+  interface Career {
+    careerid: string;
+    name: string;
+    faculty: Faculty;
+  }
+  
+  interface Faculty {
+    facultyid: string;
+    name: string;
+  }
+  
   const [formData, setFormData] = useState(User);
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({});
   const [selectedRoles, setSelectedRoles] = useState<RoleOption[]>([]);
   const [roles, setRoles] = useState<RoleOption[]>([]); // Declare roles state variable
+  const [careers, setCareers] = useState<Career[]>([]);
   const { firstname, lastname, email, cellphone, address, password, status } = formData;
   
   useEffect(() => {
@@ -40,9 +51,24 @@ const UserForm = () => {
         console.error('Failed to fetch roles:', error);
       }
     };
-  
+
+    const fetchCareers = async () => {
+      try {
+        const response = await dataRequester('get_careers', {
+          method: 'GET',
+        });
+        const content = await response.resultado;
+        setCareers(content);
+      } catch (error) {
+        console.error('Failed to fetch careers:', error);
+      }
+    };
+    
+    fetchCareers();
     fetchRoles();
   }, []);
+
+
 
   const validateField = (name: string, value: string | RoleOption[]) => {
     let error: string | undefined;
@@ -127,7 +153,7 @@ const UserForm = () => {
 
       if (result === 'Usuario creado') {
         toast.success(String(result));
-        navigate("users/list");
+        navigate("/users/list");
       }
 
       if (result === 'Error al crear el usuario') {
@@ -291,6 +317,25 @@ const UserForm = () => {
                     </select>
                     {errors.status && <p className="text-danger">{errors.status}</p>}
                   </div>
+                </div>
+
+                <div className="mb-4.5">
+                  <label className="mb-2.5 block text-black dark:text-white">
+                    Facultad <span className="text-meta-1">*</span>
+                  </label>
+                  <select
+                    name="career"
+                    onChange={onChange}
+                    className={`relative z-20 w-full rounded border-[1.5px] ${errors.career ? 'border-danger' : 'border-stroke'} appearance-none bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                  >
+                    <option value="">Seleccione una carrera</option>
+                    {careers.map((career) => (
+                      <option key={career.careerid} value={career.careerid}>
+                        {career.name} - {career.faculty.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.career && <p className="text-danger">{errors.career}</p>}
                 </div>
 
                 <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray">

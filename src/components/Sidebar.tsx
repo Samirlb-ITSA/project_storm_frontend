@@ -158,6 +158,16 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                   // { to: 'users/upload', text: 'Importar Empresas' },
                 ]}
               />
+
+              {/* <!-- Menú Carreras --> */}
+              <SidebarLinkWithSubmenu
+                title="Menu Carreras"
+                pathname={pathname}
+                links={[
+                  { to: '/careers/create', text: 'Agregar Carrera' },
+                  { to: '/careers/list', text: 'Carreras' },
+                ]}
+              />
             </ul>
           </div>
         </nav>
