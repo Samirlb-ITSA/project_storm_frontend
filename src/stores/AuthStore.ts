@@ -1,9 +1,9 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export interface Error {
   detail: string;
-} 
+}
 
 interface AuthState {
   session: any;
@@ -23,11 +23,11 @@ const useAuthStore = create(
       session: null,
       setSession: (session) => set({ session }),
       login: async (email, password) => {
-        if (!email) return Promise.reject(new Error("Email is required"));
-        if (!password) return Promise.reject(new Error("Password is required"));
+        if (!email) return Promise.reject(new Error('Email is required'));
+        if (!password) return Promise.reject(new Error('Password is required'));
 
-        const response = await fetch(serverUrl + "/login", {
-          method: "POST",
+        const response = await fetch(serverUrl + '/login', {
+          method: 'POST',
           body: new URLSearchParams(`username=${email}&password=${password}`),
         });
         const data = await response.json();
@@ -40,10 +40,10 @@ const useAuthStore = create(
       },
     }),
     {
-      name: "auth-storage",
-    }
-  )
+      name: 'auth-storage',
+    },
+  ),
 );
 
-
 export default useAuthStore;
+

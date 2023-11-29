@@ -1,8 +1,27 @@
+import { useEffect } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
 import CoverOne from '../images/cover/cover-01.png';
 import userSix from '../images/user/user-06.png';
+import useAuthStore from '../stores/AuthStore';
+import useUserStore from '../stores/UserStore';
+import { JwtPayload, jwtDecode } from 'jwt-decode';
 
 const Profile = () => {
+  // ** Stores States
+  const user = useUserStore((state) => state.User);
+  const { getUserById } = useUserStore();
+  const session = useAuthStore((state) => state.session);
+  const { id } = jwtDecode<JwtPayload>(session);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user])
+
+  useEffect(() => {
+    getUserById(id, session);
+  }, [])
+
+
   return (
     <>
       <Breadcrumb pageName="Profile" />
