@@ -14,6 +14,7 @@ const List = () => {
     (async () => {
       try {
         const content = await apiService('get_job_offers', { method: 'GET' });
+        console.log(joboffers.length > 0 )
         setJoboffers(content.resultado);
       } catch (error) {
         toast.error(String(error));
@@ -53,7 +54,7 @@ const List = () => {
             </tr>
           </thead>
           <tbody>
-            {joboffers.length > 0 ? (
+            {Array.isArray(joboffers) && joboffers.length > 0 ? (
               joboffers.map((joboffer: any) => (
                 <tr key={joboffer.offerid}>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
