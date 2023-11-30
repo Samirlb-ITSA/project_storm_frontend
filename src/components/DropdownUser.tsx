@@ -15,7 +15,7 @@ const DropdownUser = () => {
     logout();
 
     window.location.href = '/auth/signin';
-  }
+  };
 
   // close on click outside
   useEffect(() => {
@@ -115,7 +115,7 @@ const DropdownUser = () => {
               </svg>
               Mi Perfil
             </Link>
-          </li> 
+          </li>
           <li>
             <Link
               to="/settings"
@@ -144,7 +144,7 @@ const DropdownUser = () => {
         </ul>
         <button
           className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
-          onClick={handleLogout}        
+          onClick={handleLogout}
         >
           <svg
             className="fill-current"

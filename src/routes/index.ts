@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import UploadUsers from '../pages/Dashboard/UploadUsers';
+import JobOfferDetail from '../pages/JobOfferDetail';
 
 const Calendar = lazy(() => import('../pages/Calendar'));
 const Chart = lazy(() => import('../pages/Chart'));
@@ -7,6 +8,10 @@ const Dashboard = lazy(() => import('../pages/Dashboard/Home'));
 const FormElements = lazy(() => import('../pages/Form/FormElements'));
 const UserForm = lazy(() => import('../pages/Form/UserForm'));
 const Users = lazy(() => import('../pages/Users/List'));
+
+// ** List Job Offers
+const ListJobOffers = lazy(() => import('../pages/ListJobOffers'));
+const JobOfferDetail = lazy(() => import('../pages/JobOfferDetail'));
 
 const CompanyForm = lazy(() => import('../pages/Form/CompanyForm'));
 const Company = lazy(() => import('../pages/Companies/List'));
@@ -41,6 +46,16 @@ const coreRoutes = [
     component: Profile,
   },
   {
+    path: '/job-offers',
+    title: 'Ofertas Laborales',
+    component: ListJobOffers,
+  },
+  {
+    path: '/job-offers/:id',
+    title: 'Ofertas Laborales',
+    component: JobOfferDetail,
+  },
+  {
     path: '/forms/form-elements',
     title: 'Forms Elements',
     component: FormElements,
@@ -68,7 +83,7 @@ const coreRoutes = [
     component: CompanyForm,
   },
   {
-    path: '/dashboard/companies/list',  
+    path: '/dashboard/companies/list',
     title: 'Lista de empresas',
     component: Company,
   },
@@ -79,7 +94,7 @@ const coreRoutes = [
     component: RolForm,
   },
   {
-    path: '/dashboard/roles/list',  
+    path: '/dashboard/roles/list',
     title: 'Lista de roles',
     component: Roles,
   },
@@ -90,7 +105,7 @@ const coreRoutes = [
     component: JobOffersForm,
   },
   {
-    path: '/dashboard/job_offers/list',  
+    path: '/dashboard/job_offers/list',
     title: 'Lista de Ofertas Laborales',
     component: JobOffers,
   },

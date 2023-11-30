@@ -14,13 +14,8 @@ const Profile = () => {
   const { id } = jwtDecode<JwtPayload>(session);
 
   useEffect(() => {
-    console.log(user);
-  }, [user])
-
-  useEffect(() => {
     getUserById(id, session);
-  }, [])
-
+  }, []);
 
   return (
     <>
