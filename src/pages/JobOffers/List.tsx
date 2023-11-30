@@ -47,6 +47,9 @@ const List = () => {
               <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                 Estado
               </th>
+              <th className="py-4 px-4 font-medium text-black dark:text-white">
+                Acciones
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -65,7 +68,7 @@ const List = () => {
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
-                  {joboffer.status}
+                  {joboffer.status ? 'Activo' : 'Inactivo'}
                   </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

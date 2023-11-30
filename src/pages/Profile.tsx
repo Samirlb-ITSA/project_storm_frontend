@@ -4,14 +4,26 @@ import CoverOne from '../images/cover/cover-01.png';
 import userSix from '../images/user/user-06.png';
 import useAuthStore from '../stores/AuthStore';
 import useUserStore from '../stores/UserStore';
-import { JwtPayload, jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+
+interface Role {
+  roleid: string
+  name: string
+} 
+interface Token {
+  id: string
+  first_name: string
+  last_name: string
+  roles: [Role]
+  exp: number
+}
 
 const Profile = () => {
   // ** Stores States
   const user = useUserStore((state) => state.User);
   const { getUserById } = useUserStore();
   const session = useAuthStore((state) => state.session);
-  const { id } = jwtDecode<JwtPayload>(session);
+  const { id } = jwtDecode<Token>(session);
 
   useEffect(() => {
     console.log(user);

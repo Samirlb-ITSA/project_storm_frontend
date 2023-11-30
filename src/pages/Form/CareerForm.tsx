@@ -12,7 +12,7 @@ interface Faculty {
 interface CareerIn {
   name: string;
   status: boolean;
-  faculty: string;
+  facultyid: string;
 }
 
 const CareerForm = () => {
@@ -21,13 +21,13 @@ const CareerForm = () => {
   let initialCareer: CareerIn = {
     name: '',
     status: true,
-    faculty: '',
+    facultyid: '',
   };
 
   const [formData, setFormData] = useState<CareerIn>(initialCareer);
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({});
   const [faculties, setFaculties] = useState<Faculty[]>([]);
-  const { name, status, faculty } = formData;
+  const { name, status, facultyid } = formData;
   
   useEffect(() => {
     const fetchFaculties = async () => {
@@ -47,7 +47,7 @@ const CareerForm = () => {
       case 'name':
         error = value ? undefined : 'El nombre es obligatorio';
         break;
-      case 'faculty':
+      case 'facultyid':
         error = value ? undefined : 'La facultad es obligatoria';
         break;
       default:
@@ -132,7 +132,7 @@ const CareerForm = () => {
                     Facultad <span className="text-meta-1">*</span>
                   </label>
                   <select
-                    name="faculty"
+                    name="facultyid"
                     onChange={onChange}
                     className={`relative z-20 w-full rounded border-[1.5px] ${errors.faculty ? 'border-danger' : 'border-stroke'} appearance-none bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     >
@@ -149,7 +149,7 @@ const CareerForm = () => {
 
                 <div className="mb-4.5">
                     <label className="mb-2.5 block text-black dark:text-white">
-                        Status <span className="text-meta-1">*</span>
+                        Estado <span className="text-meta-1">*</span>
                     </label>
                     <select
                         name="status"

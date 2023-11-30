@@ -41,8 +41,17 @@ const CompanyForm = () => {
       const response = await dataRequester('get_faculties', {
         method: 'GET',
       });
-      const content = await response.resultado;
-      setFaculties(content);
+      const result = await response.resultado;
+      setFaculties(result);
+
+      if (result === 'Empresa creada') {
+        toast.success(String(result));
+        navigate("/company/list");
+      }
+
+      if (result === 'Error al crear la empresa') {
+        toast.error(String(result));
+      } 
     };
   
     fetchFaculties();
@@ -141,8 +150,6 @@ const CompanyForm = () => {
             </div>
             <form onSubmit={onSubmit}>
               <div className="p-6.5">
-
-
                   <div className="mb-4.5">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Nombre <span className="text-meta-1">*</span>
@@ -204,8 +211,7 @@ const CompanyForm = () => {
                     {errors.cellphone && <p className="text-danger">{errors.cellphone}</p>}
                   </div>
                 </div>
-                <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                  <div className="w-full xl:w-1/2">
+                <div className="mb-4.5">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Nit <span className="text-meta-1">*</span>
                     </label>
@@ -218,26 +224,6 @@ const CompanyForm = () => {
                       className={`w-full rounded border-[1.5px] ${errors.nit ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
                     {errors.nit && <p className="text-danger">{errors.nit}</p>}
-                  </div>
-
-                  <div className="w-full xl:w-1/2">
-                    <label className="mb-2.5 block text-black dark:text-white">
-                      Facultad <span className="text-meta-1">*</span>
-                    </label>
-                    <select
-                      name="faculty"
-                      onChange={onChange}
-                      className={`relative z-20 w-full rounded border-[1.5px] ${errors.faculty ? 'border-danger' : 'border-stroke'} appearance-none bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
-                      >
-                      <option value="">Seleccione una facultad</option>
-                      {faculties.map((faculty) => (
-                        <option key={faculty.facultyid} value={faculty.facultyid}>
-                          {faculty.name}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.faculty && <p className="text-danger">{errors.faculty}</p>}
-                  </div>
                 </div>
                 <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray">
                   Crear Empresa

@@ -79,7 +79,7 @@ const ChartThree: React.FC<ChartThreeProps> = ({ rolesCount, totalUsers }) => {
         {labels.map((label, index) => (
           <div key={label} className="w-full px-8 sm:w-1/2">
             <div className="flex w-full items-center">
-            <span className={`mr-2 block h-3 w-full max-w-3 rounded-full bg-${colors[index] ? colors[index] : '#3c4fe0'}`}></span>
+            <span className={`mr-2 block h-3 w-full max-w-3 rounded-full`}></span>
             <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
                 <span> {label} </span>
                 <span> {Math.round(series[index])}% </span>

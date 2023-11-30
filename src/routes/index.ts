@@ -17,7 +17,7 @@ const Roles = lazy(() => import('../pages/Roles/List'));
 const JobOffersForm = lazy(() => import('../pages/Form/JobOffersForm'));
 const JobOffers = lazy(() => import('../pages/JobOffers/List'));
 
-const CareerForm = lazy(() => import('../pages/Form/CompanyForm'));
+const CareerForm = lazy(() => import('../pages/Form/CareerForm'));
 const Career = lazy(() => import('../pages/Careers/List'));
 
 const Profile = lazy(() => import('../pages/Profile'));

@@ -2,6 +2,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import Logo from '../images/logo/logo.svg';
 import SidebarLinkWithSubmenu from './SidebarLinkGroup';
+import { jwtDecode } from 'jwt-decode';
+import useAuthStore from '../stores/AuthStore';
+interface Role {
+  roleid: string
+  name: string
+}
+
+interface Token {
+  id: string
+  first_name: string
+  last_name: string
+  roles: [Role]
+  exp: number
+}
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -9,6 +23,17 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
+  const session = useAuthStore((state) => state.session);
+  let token: Token | null = null;
+  let isAdmin = false
+  let isGraduate = false
+  let isProfessor = false
+  if (typeof session === 'string') {
+    token = jwtDecode<Token>(session);
+    isAdmin = token.roles.some(role => role.name === 'Admin');
+    isGraduate = token.roles.some(role => role.name === 'Graduate');
+    isProfessor = token.roles.some(role => role.name === 'Teacher');
+  }
   const location = useLocation();
   const { pathname } = location;
 
@@ -55,6 +80,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     }
   }, [sidebarExpanded]);
 
+  // Check role
+
   return (
     <aside
       ref={sidebar}
@@ -100,74 +127,88 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 </NavLink>
               </li>
               {/* <!-- Menu Item Profile --> */}
-              <li>
-                <NavLink
-                  to="/dashboard"
-                  className={`group gap-1 relative flex items-center rounded-sm py-2 pl-3 pr-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('dashboard') && 'bg-graydark dark:bg-meta-4'
-                    }`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="fill-current"  width="29" height="24" viewBox="0 0 28 24"><path d="M18.29 4.09v.492h1.241l-.836.86c-.465.472-1.097 1.113-1.414 1.425l-.578.563-.965-.489-.965-.496-1.933 1.977-1.938 1.98-.933-.48c-.848-.43-.942-.473-1.004-.434-.04.028-.969.735-2.067 1.575l-1.996 1.53.293.395.29.395 1.812-1.39 1.812-1.388.993.508.996.508 1.933-1.976 1.938-1.98.965.495.968.492 1.653-1.68 1.656-1.679.016 1.266h.968V3.594H18.29zm0 0M17.29 13.977v4.453h-.966v-6.926h-2.906v6.926h-.965v-4.946H9.547v4.946h-.965v-2.97H5.676v2.97h-1v.988h16.52v-.988h-1V9.527h-2.907zm1.937.496v3.957h-.97v-7.914h.97zm-3.872.988v2.969h-.968v-5.934h.968zm-3.87.988v1.98h-.97v-3.956h.97zm-3.872.992v.989h-.968v-1.98h.968zm0 0"/></svg>
-                  Estadisticas
-                </NavLink>
-              </li>
+              {isAdmin && (
+                <li>
+                  <NavLink
+                    to="/dashboard"
+                    className={`group gap-1 relative flex items-center rounded-sm py-2 pl-3 pr-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('dashboard') && 'bg-graydark dark:bg-meta-4'
+                      }`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="fill-current"  width="29" height="24" viewBox="0 0 28 24"><path d="M18.29 4.09v.492h1.241l-.836.86c-.465.472-1.097 1.113-1.414 1.425l-.578.563-.965-.489-.965-.496-1.933 1.977-1.938 1.98-.933-.48c-.848-.43-.942-.473-1.004-.434-.04.028-.969.735-2.067 1.575l-1.996 1.53.293.395.29.395 1.812-1.39 1.812-1.388.993.508.996.508 1.933-1.976 1.938-1.98.965.495.968.492 1.653-1.68 1.656-1.679.016 1.266h.968V3.594H18.29zm0 0M17.29 13.977v4.453h-.966v-6.926h-2.906v6.926h-.965v-4.946H9.547v4.946h-.965v-2.97H5.676v2.97h-1v.988h16.52v-.988h-1V9.527h-2.907zm1.937.496v3.957h-.97v-7.914h.97zm-3.872.988v2.969h-.968v-5.934h.968zm-3.87.988v1.98h-.97v-3.956h.97zm-3.872.992v.989h-.968v-1.98h.968zm0 0"/></svg>
+                    Estadisticas
+                  </NavLink>
+                </li>
+              )}
               {/* <!-- Menu Item Profile --> */}
               
-              {/* <!-- Menú Usuarios --> */}
-              <SidebarLinkWithSubmenu
-                title="Menu usuarios"
-                pathname={pathname}
-                links={[
-                  { to: '/users/create', text: 'Agregar usuario' },
-                  { to: '/users/list', text: 'Usuarios' },
-                  { to: '/users/upload', text: 'Importar Usuarios' },
-                ]}
-              />
+              {isAdmin && (
+                <>
+                  {/* <!-- Menú Usuarios --> */}
+                  <SidebarLinkWithSubmenu
+                    title="Menu usuarios"
+                    pathname={pathname}
+                    links={[
+                      { to: '/users/create', text: 'Agregar usuario' },
+                      { to: '/users/list', text: 'Usuarios' },
+                      { to: '/users/upload', text: 'Importar Usuarios' },
+                    ]}
+                  />
 
-              {/* <!-- Menú Empresas --> */}
-              <SidebarLinkWithSubmenu
-                title="Menu Empresas"
-                pathname={pathname}
-                links={[
-                  // { to: '', text: 'Estadisticas' },
-                  { to: '/companies/create', text: 'Agregar Empresa' },
-                  { to: '/companies/list', text: 'Empresas' },
-                  // { to: 'users/upload', text: 'Importar Empresas' },
-                ]}
-              />
+                  {/* <!-- Menú Empresas --> */}
+                  <SidebarLinkWithSubmenu
+                    title="Menu Empresas"
+                    pathname={pathname}
+                    links={[
+                      // { to: '', text: 'Estadisticas' },
+                      { to: '/companies/create', text: 'Agregar Empresa' },
+                      { to: '/companies/list', text: 'Empresas' },
+                      // { to: 'users/upload', text: 'Importar Empresas' },
+                    ]}
+                  />
 
-              {/* <!-- Menú Rol --> */}
-              <SidebarLinkWithSubmenu
-                title="Menu Roles"
-                pathname={pathname}
-                links={[
-                  // { to: '', text: 'Estadisticas' },
-                  { to: '/roles/create', text: 'Agregar Rol' },
-                  { to: '/roles/list', text: 'Roles' },
-                  // { to: 'users/upload', text: 'Importar Rol' },
-                ]}
-              />
+                  {/* <!-- Menú Rol --> */}
+                  <SidebarLinkWithSubmenu
+                    title="Menu Roles"
+                    pathname={pathname}
+                    links={[
+                      // { to: '', text: 'Estadisticas' },
+                      { to: '/roles/create', text: 'Agregar Rol' },
+                      { to: '/roles/list', text: 'Roles' },
+                      // { to: 'users/upload', text: 'Importar Rol' },
+                    ]}
+                  />
+                </>
+              )}
 
-              {/* <!-- Menú Ofertas --> */}
-              <SidebarLinkWithSubmenu
-                title="Menu Ofertas"
-                pathname={pathname}
-                links={[
-                  // { to: '', text: 'Estadisticas' },
-                  { to: '/job_offers/create', text: 'Agregar Oferta Laboral' },
-                  { to: '/job_offers/list', text: 'Ofertas Laborales' },
-                  // { to: 'users/upload', text: 'Importar Empresas' },
-                ]}
-              />
+              {(isAdmin || isGraduate || isProfessor) && (
+                <>
+                  {/* <!-- Menú Ofertas --> */}
+                  <SidebarLinkWithSubmenu
+                    title="Menu Ofertas"
+                    pathname={pathname}
+                    links={[
+                      // { to: '', text: 'Estadisticas' },
+                      ...(isAdmin || isProfessor ? [{ to: '/job_offers/create', text: 'Agregar Oferta Laboral' }] : []),
+                      { to: '/job_offers/list', text: 'Ofertas Laborales' },
+                      // { to: 'users/upload', text: 'Importar Empresas' },
+                    ]}
+                  />
+                </>
+              )}
 
-              {/* <!-- Menú Carreras --> */}
-              <SidebarLinkWithSubmenu
-                title="Menu Carreras"
-                pathname={pathname}
-                links={[
-                  { to: '/careers/create', text: 'Agregar Carrera' },
-                  { to: '/careers/list', text: 'Carreras' },
-                ]}
-              />
+              {isAdmin && (
+                <>
+                  {/* <!-- Menú Carreras --> */}
+                  <SidebarLinkWithSubmenu
+                    title="Menu Carreras"
+                    pathname={pathname}
+                    links={[
+                      { to: '/careers/create', text: 'Agregar Carrera' },
+                      { to: '/careers/list', text: 'Carreras' },
+                    ]}
+                  />
+                </>
+              )}
             </ul>
           </div>
         </nav>

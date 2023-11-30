@@ -2,32 +2,58 @@ import Breadcrumb from '../../components/Breadcrumb';
 import { useState } from 'react';
 import { apiClient } from '../../js/apiClient';
 
-
 const RolForm = () => {
   const dataRequester = apiClient();
-  let Rol = {
+  interface Rol {
+    [key: string]: string;
+    name: string;
+  }
+  
+  let Rol: Rol = {
     name: '',
   };
-
+  
   const [formData, setFormData] = useState(Rol);
-  const { name } =
-    formData;
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({});
+  const { name } = formData;
+
+  const validateField = (name: string, value: string) => {
+    let error: string | undefined;
+    if (name === 'name' && !value) {
+      error = 'El nombre es obligatorio';
+    }
+    return error;
+  };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
+    const error = validateField(name, value);
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const rawResponse = await dataRequester('create_role', {
-      method: 'POST',
-      body: formData,
+
+    let newErrors = { ...errors };
+    Object.keys(formData).forEach(key => {
+      const error = validateField(key, String(formData[key]));
+      newErrors[key] = error;
     });
-    const content = await rawResponse.json();
-    console.log(content);
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).every((error) => error === undefined)) {
+      const rawResponse = await dataRequester('create_role', {
+        method: 'POST',
+        body: formData,
+      });
+      const content = await rawResponse.json();
+      console.log(content);
+    }
   };
 
   return (
@@ -55,10 +81,10 @@ const RolForm = () => {
                       defaultValue={name}
                       onChange={onChange}
                       placeholder="Ingrese nombre de usuario"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className={`w-full rounded border-[1.5px] ${errors.name ? 'border-danger' : 'border-stroke'} bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
                     />
+                    {errors.name && <p className="text-danger">{errors.name}</p>}
                 </div>
-
 
                 <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray">
                   Crear Rol

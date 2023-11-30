@@ -3,6 +3,19 @@ import { Link } from 'react-router-dom';
 
 import UserOne from '../images/user/user-01.png';
 import useAuthStore from '../stores/AuthStore';
+import { jwtDecode } from 'jwt-decode';
+
+interface Role {
+  roleid: string
+  name: string
+} 
+interface Token {
+  id: string
+  first_name: string
+  last_name: string
+  roles: [Role]
+  exp: number
+}
 
 const DropdownUser = () => {
   const { logout } = useAuthStore();
@@ -10,7 +23,11 @@ const DropdownUser = () => {
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
-
+  const session = useAuthStore((state) => state.session);
+  let token: Token | null = null;
+  if (typeof session === 'string') {
+    token = jwtDecode<Token>(session);
+  }
   const handleLogout = () => {
     logout();
 
@@ -53,7 +70,7 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Samir Lora
+            {token?.first_name ?? "" + " " + token?.last_name ?? ""}
           </span>
           <span className="block text-xs">Programador</span>
         </span>
