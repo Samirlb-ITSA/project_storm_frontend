@@ -27,7 +27,7 @@ const useJobOfferStore = create<JobOfferState & JobOfferAction>((set) => ({
     name: '',
     workday: '',
     creationDate: '',
-    status: '',
+    status: false,
     companyid: '',
   },
   getJobOffers: async (token: string) => {
