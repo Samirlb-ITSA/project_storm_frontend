@@ -14,6 +14,7 @@ const List = () => {
     (async () => {
       try {
         const content = await apiService('get_job_offers', { method: 'GET' });
+        console.log(joboffers.length > 0 )
         setJoboffers(content.resultado);
       } catch (error) {
         toast.error(String(error));
@@ -47,10 +48,13 @@ const List = () => {
               <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                 Estado
               </th>
+              <th className="py-4 px-4 font-medium text-black dark:text-white">
+                Acciones
+              </th>
             </tr>
           </thead>
           <tbody>
-            {joboffers.length > 0 ? (
+            {Array.isArray(joboffers) && joboffers.length > 0 ? (
               joboffers.map((joboffer: any) => (
                 <tr key={joboffer.offerid}>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
@@ -65,7 +69,7 @@ const List = () => {
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
-                  {joboffer.status}
+                  {joboffer.status ? 'Activo' : 'Inactivo'}
                   </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

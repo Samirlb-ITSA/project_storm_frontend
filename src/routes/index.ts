@@ -1,6 +1,5 @@
 import { lazy } from 'react';
-import UploadUsers from '../pages/Dashboard/UploadUsers';
-import JobOfferDetail from '../pages/JobOfferDetail';
+import UploadUsers from '../pages/Users/UploadUsers';
 
 const Calendar = lazy(() => import('../pages/Calendar'));
 const Chart = lazy(() => import('../pages/Chart'));
@@ -21,6 +20,9 @@ const Roles = lazy(() => import('../pages/Roles/List'));
 
 const JobOffersForm = lazy(() => import('../pages/Form/JobOffersForm'));
 const JobOffers = lazy(() => import('../pages/JobOffers/List'));
+
+const CareerForm = lazy(() => import('../pages/Form/CareerForm'));
+const Career = lazy(() => import('../pages/Careers/List'));
 
 const Profile = lazy(() => import('../pages/Profile'));
 const Settings = lazy(() => import('../pages/Settings'));
@@ -62,50 +64,61 @@ const coreRoutes = [
   },
   //Users Routes
   {
-    path: '/dashboard/users/create',
+    path: '/users/create',
     title: 'Crear usuario',
     component: UserForm,
   },
   {
-    path: '/dashboard/users/list',
+    path: '/users/list',
     title: 'Lista de usuarios',
     component: Users,
   },
   {
-    path: '/dashboard/users/upload',
+    path: '/users/upload',
     title: 'Importar usuarios',
     component: UploadUsers,
   },
   //Companies Routes
   {
-    path: '/dashboard/companies/create',
+    path: '/companies/create',
     title: 'Crear Empresa',
     component: CompanyForm,
   },
   {
-    path: '/dashboard/companies/list',
+    path: '/companies/list',  
     title: 'Lista de empresas',
     component: Company,
   },
+  //Career Routes
+    {
+      path: '/careers/create',
+      title: 'Crear Carrera',
+      component: CareerForm,
+    },
+    {
+      path: '/careers/list',  
+      title: 'Lista de Carreras',
+      component: Career,
+    },
   //Roles Routes
   {
-    path: '/dashboard/roles/create',
+    path: '/roles/create',
     title: 'Crear Roles',
     component: RolForm,
   },
   {
-    path: '/dashboard/roles/list',
+    path: '/roles/list',  
     title: 'Lista de roles',
     component: Roles,
   },
   //JobOffers Routes
   {
-    path: '/dashboard/job_offers/create',
+    path: '/job_offers/create',
     title: 'Crear Ofertas Laborales',
     component: JobOffersForm,
   },
   {
-    path: '/dashboard/job_offers/list',
+    path: '/job_offers/list',  
     title: 'Lista de Ofertas Laborales',
     component: JobOffers,
   },

@@ -1,14 +1,39 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import Logo from '../images/logo/logo.svg';
-import SidebarLinkGroup from './SidebarLinkGroup';
+import SidebarLinkWithSubmenu from './SidebarLinkGroup';
+import { jwtDecode } from 'jwt-decode';
+import useAuthStore from '../stores/AuthStore';
+interface Role {
+  roleid: string
+  name: string
+}
+
+interface Token {
+  id: string
+  first_name: string
+  last_name: string
+  roles: [Role]
+  exp: number
+}
 
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
 }
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
+const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
+  const session = useAuthStore((state) => state.session);
+  let token: Token | null = null;
+  let isAdmin = false
+  let isGraduate = false
+  let isProfessor = false
+  if (typeof session === 'string') {
+    token = jwtDecode<Token>(session);
+    isAdmin = token.roles.some(role => role.name === 'Admin');
+    isGraduate = token.roles.some(role => role.name === 'Graduate');
+    isProfessor = token.roles.some(role => role.name === 'Teacher');
+  }
   const location = useLocation();
   const { pathname } = location;
 
@@ -55,6 +80,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     }
   }, [sidebarExpanded]);
 
+  // Check role
+
   return (
     <aside
       ref={sidebar}
@@ -64,7 +91,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-        <NavLink to="/dashboard/">
+        <NavLink to="">
           <h2>Project Storm</h2>
         </NavLink>
 
@@ -75,19 +102,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           aria-expanded={sidebarOpen}
           className="block lg:hidden"
         >
-          <svg
-            className="fill-current"
-            width="20"
-            height="18"
-            viewBox="0 0 20 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M19 8.175H2.98748L9.36248 1.6875C9.69998 1.35 9.69998 0.825 9.36248 0.4875C9.02498 0.15 8.49998 0.15 8.16248 0.4875L0.399976 8.3625C0.0624756 8.7 0.0624756 9.225 0.399976 9.5625L8.16248 17.4375C8.31248 17.5875 8.53748 17.7 8.76248 17.7C8.98748 17.7 9.17498 17.625 9.36248 17.475C9.69998 17.1375 9.69998 16.6125 9.36248 16.275L3.02498 9.8625H19C19.45 9.8625 19.825 9.4875 19.825 9.0375C19.825 8.55 19.45 8.175 19 8.175Z"
-              fill=""
-            />
-          </svg>
+          {/* ... SVG del botón ... */}
         </button>
       </div>
       {/* <!-- SIDEBAR HEADER --> */}
@@ -100,7 +115,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
               MENU
             </h3>
-
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Menu Item List Job Offers --> */}
               <li>
@@ -140,531 +154,93 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     pathname.includes('profile') && 'bg-graydark dark:bg-meta-4'
                   }`}
                 >
-                  <svg
-                    className="fill-current"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 18 18"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M9.0002 7.79065C11.0814 7.79065 12.7689 6.1594 12.7689 4.1344C12.7689 2.1094 11.0814 0.478149 9.0002 0.478149C6.91895 0.478149 5.23145 2.1094 5.23145 4.1344C5.23145 6.1594 6.91895 7.79065 9.0002 7.79065ZM9.0002 1.7719C10.3783 1.7719 11.5033 2.84065 11.5033 4.16252C11.5033 5.4844 10.3783 6.55315 9.0002 6.55315C7.62207 6.55315 6.49707 5.4844 6.49707 4.16252C6.49707 2.84065 7.62207 1.7719 9.0002 1.7719Z"
-                      fill=""
-                    />
-                    <path
-                      d="M10.8283 9.05627H7.17207C4.16269 9.05627 1.71582 11.5313 1.71582 14.5406V16.875C1.71582 17.2125 1.99707 17.5219 2.3627 17.5219C2.72832 17.5219 3.00957 17.2407 3.00957 16.875V14.5406C3.00957 12.2344 4.89394 10.3219 7.22832 10.3219H10.8564C13.1627 10.3219 15.0752 12.2063 15.0752 14.5406V16.875C15.0752 17.2125 15.3564 17.5219 15.7221 17.5219C16.0877 17.5219 16.3689 17.2407 16.3689 16.875V14.5406C16.2846 11.5313 13.8377 9.05627 10.8283 9.05627Z"
-                      fill=""
-                    />
-                  </svg>
+                  <svg width="18" height="18" className="fill-current" xmlns="http://www.w3.org/2000/svg"><path d="M9 7.79c2.081 0 3.769-1.63 3.769-3.656C12.769 2.11 11.08.478 9 .478 6.92.478 5.231 2.11 5.231 4.134c0 2.025 1.688 3.657 3.77 3.657zm0-6.018c1.378 0 2.503 1.069 2.503 2.39 0 1.322-1.125 2.391-2.503 2.391-1.378 0-2.503-1.069-2.503-2.39C6.497 2.84 7.622 1.772 9 1.772zM10.828 9.056H7.172c-3.01 0-5.456 2.475-5.456 5.485v2.334c0 .337.281.647.647.647a.636.636 0 00.647-.647v-2.334c0-2.307 1.884-4.22 4.218-4.22h3.628c2.307 0 4.22 1.885 4.22 4.22v2.334c0 .337.28.647.646.647a.636.636 0 00.647-.647v-2.334c-.084-3.01-2.531-5.485-5.54-5.485z"/></svg>
                   Perfil
                 </NavLink>
               </li>
               {/* <!-- Menu Item Profile --> */}
-              {/* <!-- Menu Item Dashboard --> */}
-
-              {/* <!-- Menú Usuarios --> */}
-              <SidebarLinkGroup
-                activeCondition={
-                  pathname === '/' || pathname.includes('dashboard')
-                }
-              >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <NavLink
-                        to="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === '/' || pathname.includes('user')) &&
-                          'bg-graydark dark:bg-meta-4'
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true);
-                        }}
-                      >
-                        <svg
-                          className="fill-current"
-                          width="18"
-                          height="18"
-                          viewBox="0 0 18 18"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M6.10322 0.956299H2.53135C1.5751 0.956299 0.787598 1.7438 0.787598 2.70005V6.27192C0.787598 7.22817 1.5751 8.01567 2.53135 8.01567H6.10322C7.05947 8.01567 7.84697 7.22817 7.84697 6.27192V2.72817C7.8751 1.7438 7.0876 0.956299 6.10322 0.956299ZM6.60947 6.30005C6.60947 6.5813 6.38447 6.8063 6.10322 6.8063H2.53135C2.2501 6.8063 2.0251 6.5813 2.0251 6.30005V2.72817C2.0251 2.44692 2.2501 2.22192 2.53135 2.22192H6.10322C6.38447 2.22192 6.60947 2.44692 6.60947 2.72817V6.30005Z"
-                            fill=""
-                          />
-                          <path
-                            d="M15.4689 0.956299H11.8971C10.9408 0.956299 10.1533 1.7438 10.1533 2.70005V6.27192C10.1533 7.22817 10.9408 8.01567 11.8971 8.01567H15.4689C16.4252 8.01567 17.2127 7.22817 17.2127 6.27192V2.72817C17.2127 1.7438 16.4252 0.956299 15.4689 0.956299ZM15.9752 6.30005C15.9752 6.5813 15.7502 6.8063 15.4689 6.8063H11.8971C11.6158 6.8063 11.3908 6.5813 11.3908 6.30005V2.72817C11.3908 2.44692 11.6158 2.22192 11.8971 2.22192H15.4689C15.7502 2.22192 15.9752 2.44692 15.9752 2.72817V6.30005Z"
-                            fill=""
-                          />
-                          <path
-                            d="M6.10322 9.92822H2.53135C1.5751 9.92822 0.787598 10.7157 0.787598 11.672V15.2438C0.787598 16.2001 1.5751 16.9876 2.53135 16.9876H6.10322C7.05947 16.9876 7.84697 16.2001 7.84697 15.2438V11.7001C7.8751 10.7157 7.0876 9.92822 6.10322 9.92822ZM6.60947 15.272C6.60947 15.5532 6.38447 15.7782 6.10322 15.7782H2.53135C2.2501 15.7782 2.0251 15.5532 2.0251 15.272V11.7001C2.0251 11.4188 2.2501 11.1938 2.53135 11.1938H6.10322C6.38447 11.1938 6.60947 11.4188 6.60947 11.7001V15.272Z"
-                            fill=""
-                          />
-                          <path
-                            d="M15.4689 9.92822H11.8971C10.9408 9.92822 10.1533 10.7157 10.1533 11.672V15.2438C10.1533 16.2001 10.9408 16.9876 11.8971 16.9876H15.4689C16.4252 16.9876 17.2127 16.2001 17.2127 15.2438V11.7001C17.2127 10.7157 16.4252 9.92822 15.4689 9.92822ZM15.9752 15.272C15.9752 15.5532 15.7502 15.7782 15.4689 15.7782H11.8971C11.6158 15.7782 11.3908 15.5532 11.3908 15.272V11.7001C11.3908 11.4188 11.6158 11.1938 11.8971 11.1938H15.4689C15.7502 11.1938 15.9752 11.4188 15.9752 11.7001V15.272Z"
-                            fill=""
-                          />
-                        </svg>
-                        Usuarios
-                        <svg
-                          className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
-                            open && 'rotate-180'
-                          }`}
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
-                            fill=""
-                          />
-                        </svg>
-                      </NavLink>
-                      {/* <!-- Dropdown Menu Start --> */}
-                      <div
-                        className={`translate transform overflow-hidden ${
-                          !open && 'hidden'
-                        }`}
-                      >
-                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <NavLink
-                              to="/dashboard/"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
-                              Estadisticas
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to="/dashboard/users/create"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
-                              Agregar usuario
-                            </NavLink>
-                          </li>
-
-                          <li>
-                            <NavLink
-                              to="/dashboard/users/list"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
-                              Usuarios
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to="/dashboard/users/upload"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
-                              Importar Usuarios
-                            </NavLink>
-                          </li>
-                        </ul>
-                      </div>
-                      {/* <!-- Dropdown Menu End --> */}
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
-
-              {/* <!-- Menú Empresas --> */}
-              <SidebarLinkGroup activeCondition={pathname.includes('empresas')}>
-                {(handleClick, open) => (
-                  <React.Fragment>
-                    <NavLink
-                      to="#"
-                      className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                        pathname.includes('empresas') &&
-                        'bg-graydark dark:bg-meta-4'
+              {isAdmin && (
+                <li>
+                  <NavLink
+                    to="/dashboard"
+                    className={`group gap-1 relative flex items-center rounded-sm py-2 pl-3 pr-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('dashboard') && 'bg-graydark dark:bg-meta-4'
                       }`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        sidebarExpanded
-                          ? handleClick()
-                          : setSidebarExpanded(true);
-                      }}
-                    >
-                      <svg
-                        className="fill-current"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 18 18"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M6.10322 0.956299H2.53135C1.5751 0.956299 0.787598 1.7438 0.787598 2.70005V6.27192C0.787598 7.22817 1.5751 8.01567 2.53135 8.01567H6.10322C7.05947 8.01567 7.84697 7.22817 7.84697 6.27192V2.72817C7.8751 1.7438 7.0876 0.956299 6.10322 0.956299ZM6.60947 6.30005C6.60947 6.5813 6.38447 6.8063 6.10322 6.8063H2.53135C2.2501 6.8063 2.0251 6.5813 2.0251 6.30005V2.72817C2.0251 2.44692 2.2501 2.22192 2.53135 2.22192H6.10322C6.38447 2.22192 6.60947 2.44692 6.60947 2.72817V6.30005Z"
-                          fill=""
-                        />
-                        <path
-                          d="M15.4689 0.956299H11.8971C10.9408 0.956299 10.1533 1.7438 10.1533 2.70005V6.27192C10.1533 7.22817 10.9408 8.01567 11.8971 8.01567H15.4689C16.4252 8.01567 17.2127 7.22817 17.2127 6.27192V2.72817C17.2127 1.7438 16.4252 0.956299 15.4689 0.956299ZM15.9752 6.30005C15.9752 6.5813 15.7502 6.8063 15.4689 6.8063H11.8971C11.6158 6.8063 11.3908 6.5813 11.3908 6.30005V2.72817C11.3908 2.44692 11.6158 2.22192 11.8971 2.22192H15.4689C15.7502 2.22192 15.9752 2.44692 15.9752 2.72817V6.30005Z"
-                          fill=""
-                        />
-                        <path
-                          d="M6.10322 9.92822H2.53135C1.5751 9.92822 0.787598 10.7157 0.787598 11.672V15.2438C0.787598 16.2001 1.5751 16.9876 2.53135 16.9876H6.10322C7.05947 16.9876 7.84697 16.2001 7.84697 15.2438V11.7001C7.8751 10.7157 7.0876 9.92822 6.10322 9.92822ZM6.60947 15.272C6.60947 15.5532 6.38447 15.7782 6.10322 15.7782H2.53135C2.2501 15.7782 2.0251 15.5532 2.0251 15.272V11.7001C2.0251 11.4188 2.2501 11.1938 2.53135 11.1938H6.10322C6.38447 11.1938 6.60947 11.4188 6.60947 11.7001V15.272Z"
-                          fill=""
-                        />
-                        <path
-                          d="M15.4689 9.92822H11.8971C10.9408 9.92822 10.1533 10.7157 10.1533 11.672V15.2438C10.1533 16.2001 10.9408 16.9876 11.8971 16.9876H15.4689C16.4252 16.9876 17.2127 16.2001 17.2127 15.2438V11.7001C17.2127 10.7157 16.4252 9.92822 15.4689 9.92822ZM15.9752 15.272C15.9752 15.5532 15.7502 15.7782 15.4689 15.7782H11.8971C11.6158 15.7782 11.3908 15.5532 11.3908 15.272V11.7001C11.3908 11.4188 11.6158 11.1938 11.8971 11.1938H15.4689C15.7502 11.1938 15.9752 11.4188 15.9752 11.7001V15.272Z"
-                          fill=""
-                        />
-                      </svg>
-                      Empresas
-                      <svg
-                        className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
-                          open && 'rotate-180'
-                        }`}
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        {/* ... Icono de flecha hacia abajo ... */}
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
-                          fill=""
-                        />
-                      </svg>
-                    </NavLink>
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="fill-current"  width="29" height="24" viewBox="0 0 28 24"><path d="M18.29 4.09v.492h1.241l-.836.86c-.465.472-1.097 1.113-1.414 1.425l-.578.563-.965-.489-.965-.496-1.933 1.977-1.938 1.98-.933-.48c-.848-.43-.942-.473-1.004-.434-.04.028-.969.735-2.067 1.575l-1.996 1.53.293.395.29.395 1.812-1.39 1.812-1.388.993.508.996.508 1.933-1.976 1.938-1.98.965.495.968.492 1.653-1.68 1.656-1.679.016 1.266h.968V3.594H18.29zm0 0M17.29 13.977v4.453h-.966v-6.926h-2.906v6.926h-.965v-4.946H9.547v4.946h-.965v-2.97H5.676v2.97h-1v.988h16.52v-.988h-1V9.527h-2.907zm1.937.496v3.957h-.97v-7.914h.97zm-3.872.988v2.969h-.968v-5.934h.968zm-3.87.988v1.98h-.97v-3.956h.97zm-3.872.992v.989h-.968v-1.98h.968zm0 0"/></svg>
+                    Estadisticas
+                  </NavLink>
+                </li>
+              )}
+              {/* <!-- Menu Item Profile --> */}
+              
+              {isAdmin && (
+                <>
+                  {/* <!-- Menú Usuarios --> */}
+                  <SidebarLinkWithSubmenu
+                    title="Menu usuarios"
+                    pathname={pathname}
+                    links={[
+                      { to: '/users/create', text: 'Agregar usuario' },
+                      { to: '/users/list', text: 'Usuarios' },
+                      { to: '/users/upload', text: 'Importar Usuarios' },
+                    ]}
+                  />
 
-                    {/* <!-- Dropdown Menu Empresas Start --> */}
-                    <div
-                      className={`translate transform overflow-hidden ${
-                        !open && 'hidden'
-                      }`}
-                    >
-                      <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                        <li>
-                          <NavLink
-                            to="/dashboard/"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Estadisticas
-                          </NavLink>
-                        </li>
+                  {/* <!-- Menú Empresas --> */}
+                  <SidebarLinkWithSubmenu
+                    title="Menu Empresas"
+                    pathname={pathname}
+                    links={[
+                      // { to: '', text: 'Estadisticas' },
+                      { to: '/companies/create', text: 'Agregar Empresa' },
+                      { to: '/companies/list', text: 'Empresas' },
+                      // { to: 'users/upload', text: 'Importar Empresas' },
+                    ]}
+                  />
 
-                        <li>
-                          <NavLink
-                            to="/dashboard/companies/create"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Agregar Empresa
-                          </NavLink>
-                        </li>
+                  {/* <!-- Menú Rol --> */}
+                  <SidebarLinkWithSubmenu
+                    title="Menu Roles"
+                    pathname={pathname}
+                    links={[
+                      // { to: '', text: 'Estadisticas' },
+                      { to: '/roles/create', text: 'Agregar Rol' },
+                      { to: '/roles/list', text: 'Roles' },
+                      // { to: 'users/upload', text: 'Importar Rol' },
+                    ]}
+                  />
+                </>
+              )}
 
-                        <li>
-                          <NavLink
-                            to="/dashboard/companies/list"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Empresas
-                          </NavLink>
-                        </li>
-                        {/*
-                        <li>
-                          <NavLink
-                            to="/dashboard/users/upload"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Importar Empresas
-                          </NavLink>
-                        </li>
-                          */}
-                      </ul>
-                    </div>
-                    {/* <!-- Dropdown Menu Empresas End --> */}
-                  </React.Fragment>
-                )}
-              </SidebarLinkGroup>
+              {(isAdmin || isGraduate || isProfessor) && (
+                <>
+                  {/* <!-- Menú Ofertas --> */}
+                  <SidebarLinkWithSubmenu
+                    title="Menu Ofertas"
+                    pathname={pathname}
+                    links={[
+                      // { to: '', text: 'Estadisticas' },
+                      ...(isAdmin || isProfessor ? [{ to: '/job_offers/create', text: 'Agregar Oferta Laboral' }] : []),
+                      { to: '/job_offers/list', text: 'Ofertas Laborales' },
+                      // { to: 'users/upload', text: 'Importar Empresas' },
+                    ]}
+                  />
+                </>
+              )}
 
-              {/* <!-- Menú Rol --> */}
-              <SidebarLinkGroup activeCondition={pathname.includes('roles')}>
-                {(handleClick, open) => (
-                  <React.Fragment>
-                    <NavLink
-                      to="#"
-                      className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                        pathname.includes('empresas') &&
-                        'bg-graydark dark:bg-meta-4'
-                      }`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        sidebarExpanded
-                          ? handleClick()
-                          : setSidebarExpanded(true);
-                      }}
-                    >
-                      <svg
-                        className="fill-current"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 18 18"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M6.10322 0.956299H2.53135C1.5751 0.956299 0.787598 1.7438 0.787598 2.70005V6.27192C0.787598 7.22817 1.5751 8.01567 2.53135 8.01567H6.10322C7.05947 8.01567 7.84697 7.22817 7.84697 6.27192V2.72817C7.8751 1.7438 7.0876 0.956299 6.10322 0.956299ZM6.60947 6.30005C6.60947 6.5813 6.38447 6.8063 6.10322 6.8063H2.53135C2.2501 6.8063 2.0251 6.5813 2.0251 6.30005V2.72817C2.0251 2.44692 2.2501 2.22192 2.53135 2.22192H6.10322C6.38447 2.22192 6.60947 2.44692 6.60947 2.72817V6.30005Z"
-                          fill=""
-                        />
-                        <path
-                          d="M15.4689 0.956299H11.8971C10.9408 0.956299 10.1533 1.7438 10.1533 2.70005V6.27192C10.1533 7.22817 10.9408 8.01567 11.8971 8.01567H15.4689C16.4252 8.01567 17.2127 7.22817 17.2127 6.27192V2.72817C17.2127 1.7438 16.4252 0.956299 15.4689 0.956299ZM15.9752 6.30005C15.9752 6.5813 15.7502 6.8063 15.4689 6.8063H11.8971C11.6158 6.8063 11.3908 6.5813 11.3908 6.30005V2.72817C11.3908 2.44692 11.6158 2.22192 11.8971 2.22192H15.4689C15.7502 2.22192 15.9752 2.44692 15.9752 2.72817V6.30005Z"
-                          fill=""
-                        />
-                        <path
-                          d="M6.10322 9.92822H2.53135C1.5751 9.92822 0.787598 10.7157 0.787598 11.672V15.2438C0.787598 16.2001 1.5751 16.9876 2.53135 16.9876H6.10322C7.05947 16.9876 7.84697 16.2001 7.84697 15.2438V11.7001C7.8751 10.7157 7.0876 9.92822 6.10322 9.92822ZM6.60947 15.272C6.60947 15.5532 6.38447 15.7782 6.10322 15.7782H2.53135C2.2501 15.7782 2.0251 15.5532 2.0251 15.272V11.7001C2.0251 11.4188 2.2501 11.1938 2.53135 11.1938H6.10322C6.38447 11.1938 6.60947 11.4188 6.60947 11.7001V15.272Z"
-                          fill=""
-                        />
-                        <path
-                          d="M15.4689 9.92822H11.8971C10.9408 9.92822 10.1533 10.7157 10.1533 11.672V15.2438C10.1533 16.2001 10.9408 16.9876 11.8971 16.9876H15.4689C16.4252 16.9876 17.2127 16.2001 17.2127 15.2438V11.7001C17.2127 10.7157 16.4252 9.92822 15.4689 9.92822ZM15.9752 15.272C15.9752 15.5532 15.7502 15.7782 15.4689 15.7782H11.8971C11.6158 15.7782 11.3908 15.5532 11.3908 15.272V11.7001C11.3908 11.4188 11.6158 11.1938 11.8971 11.1938H15.4689C15.7502 11.1938 15.9752 11.4188 15.9752 11.7001V15.272Z"
-                          fill=""
-                        />
-                      </svg>
-                      Roles
-                      <svg
-                        className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
-                          open && 'rotate-180'
-                        }`}
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        {/* ... Icono de flecha hacia abajo ... */}
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
-                          fill=""
-                        />
-                      </svg>
-                    </NavLink>
-
-                    {/* <!-- Dropdown Menu Roles Start --> */}
-                    <div
-                      className={`translate transform overflow-hidden ${
-                        !open && 'hidden'
-                      }`}
-                    >
-                      <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                        <li>
-                          <NavLink
-                            to="/dashboard/"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Estadisticas
-                          </NavLink>
-                        </li>
-
-                        <li>
-                          <NavLink
-                            to="/dashboard/roles/create"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Agregar Rol
-                          </NavLink>
-                        </li>
-
-                        <li>
-                          <NavLink
-                            to="/dashboard/roles/list"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Roles
-                          </NavLink>
-                        </li>
-                        {/*
-                        <li>
-                          <NavLink
-                            to="/dashboard/users/upload"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Importar Rol
-                          </NavLink>
-                        </li>
-                          */}
-                      </ul>
-                    </div>
-                    {/* <!-- Dropdown Menu Rol End --> */}
-                  </React.Fragment>
-                )}
-              </SidebarLinkGroup>
-
-              {/* <!-- Menú Ofertas --> */}
-              <SidebarLinkGroup
-                activeCondition={pathname.includes('job_offers')}
-              >
-                {(handleClick, open) => (
-                  <React.Fragment>
-                    <NavLink
-                      to="#"
-                      className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                        pathname.includes('empresas') &&
-                        'bg-graydark dark:bg-meta-4'
-                      }`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        sidebarExpanded
-                          ? handleClick()
-                          : setSidebarExpanded(true);
-                      }}
-                    >
-                      <svg
-                        className="fill-current"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 18 18"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M6.10322 0.956299H2.53135C1.5751 0.956299 0.787598 1.7438 0.787598 2.70005V6.27192C0.787598 7.22817 1.5751 8.01567 2.53135 8.01567H6.10322C7.05947 8.01567 7.84697 7.22817 7.84697 6.27192V2.72817C7.8751 1.7438 7.0876 0.956299 6.10322 0.956299ZM6.60947 6.30005C6.60947 6.5813 6.38447 6.8063 6.10322 6.8063H2.53135C2.2501 6.8063 2.0251 6.5813 2.0251 6.30005V2.72817C2.0251 2.44692 2.2501 2.22192 2.53135 2.22192H6.10322C6.38447 2.22192 6.60947 2.44692 6.60947 2.72817V6.30005Z"
-                          fill=""
-                        />
-                        <path
-                          d="M15.4689 0.956299H11.8971C10.9408 0.956299 10.1533 1.7438 10.1533 2.70005V6.27192C10.1533 7.22817 10.9408 8.01567 11.8971 8.01567H15.4689C16.4252 8.01567 17.2127 7.22817 17.2127 6.27192V2.72817C17.2127 1.7438 16.4252 0.956299 15.4689 0.956299ZM15.9752 6.30005C15.9752 6.5813 15.7502 6.8063 15.4689 6.8063H11.8971C11.6158 6.8063 11.3908 6.5813 11.3908 6.30005V2.72817C11.3908 2.44692 11.6158 2.22192 11.8971 2.22192H15.4689C15.7502 2.22192 15.9752 2.44692 15.9752 2.72817V6.30005Z"
-                          fill=""
-                        />
-                        <path
-                          d="M6.10322 9.92822H2.53135C1.5751 9.92822 0.787598 10.7157 0.787598 11.672V15.2438C0.787598 16.2001 1.5751 16.9876 2.53135 16.9876H6.10322C7.05947 16.9876 7.84697 16.2001 7.84697 15.2438V11.7001C7.8751 10.7157 7.0876 9.92822 6.10322 9.92822ZM6.60947 15.272C6.60947 15.5532 6.38447 15.7782 6.10322 15.7782H2.53135C2.2501 15.7782 2.0251 15.5532 2.0251 15.272V11.7001C2.0251 11.4188 2.2501 11.1938 2.53135 11.1938H6.10322C6.38447 11.1938 6.60947 11.4188 6.60947 11.7001V15.272Z"
-                          fill=""
-                        />
-                        <path
-                          d="M15.4689 9.92822H11.8971C10.9408 9.92822 10.1533 10.7157 10.1533 11.672V15.2438C10.1533 16.2001 10.9408 16.9876 11.8971 16.9876H15.4689C16.4252 16.9876 17.2127 16.2001 17.2127 15.2438V11.7001C17.2127 10.7157 16.4252 9.92822 15.4689 9.92822ZM15.9752 15.272C15.9752 15.5532 15.7502 15.7782 15.4689 15.7782H11.8971C11.6158 15.7782 11.3908 15.5532 11.3908 15.272V11.7001C11.3908 11.4188 11.6158 11.1938 11.8971 11.1938H15.4689C15.7502 11.1938 15.9752 11.4188 15.9752 11.7001V15.272Z"
-                          fill=""
-                        />
-                      </svg>
-                      Ofertas
-                      <svg
-                        className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
-                          open && 'rotate-180'
-                        }`}
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        {/* ... Icono de flecha hacia abajo ... */}
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
-                          fill=""
-                        />
-                      </svg>
-                    </NavLink>
-
-                    {/* <!-- Dropdown Menu Ofertas Start --> */}
-                    <div
-                      className={`translate transform overflow-hidden ${
-                        !open && 'hidden'
-                      }`}
-                    >
-                      <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                        <li>
-                          <NavLink
-                            to="/dashboard/"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Estadisticas
-                          </NavLink>
-                        </li>
-
-                        <li>
-                          <NavLink
-                            to="/dashboard/job_offers/create"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Agregar Oferta Laboral
-                          </NavLink>
-                        </li>
-
-                        <li>
-                          <NavLink
-                            to="/dashboard/job_offers/list"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Ofertas Laborales
-                          </NavLink>
-                        </li>
-                        {/*
-                        <li>
-                          <NavLink
-                            to="/dashboard/users/upload"
-                            className={({ isActive }) =>
-                              'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                              (isActive && '!text-white')
-                            }
-                          >
-                            Importar Empresas
-                          </NavLink>
-                        </li>
-                          */}
-                      </ul>
-                    </div>
-                    {/* <!-- Dropdown Menu Empresas End --> */}
-                  </React.Fragment>
-                )}
-              </SidebarLinkGroup>
+              {isAdmin && (
+                <>
+                  {/* <!-- Menú Carreras --> */}
+                  <SidebarLinkWithSubmenu
+                    title="Menu Carreras"
+                    pathname={pathname}
+                    links={[
+                      { to: '/careers/create', text: 'Agregar Carrera' },
+                      { to: '/careers/list', text: 'Carreras' },
+                    ]}
+                  />
+                </>
+              )}
             </ul>
           </div>
         </nav>
