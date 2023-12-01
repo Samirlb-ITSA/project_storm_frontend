@@ -1,18 +1,20 @@
 export interface User {
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   cellphone: string;
   userId: string;
   email: string;
   address: string;
   status: boolean;
   attributes?: [];
-  roles?: [];
+  roles?: Roles[];
   careers?: [];
 }
 
 export interface UserAttributes {}
 
-export interface Roles {}
+export interface Roles {
+  name: string
+}
 
 export interface careers {}

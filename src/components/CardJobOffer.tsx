@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useJobOfferStore from '../stores/JobOfferStore';
 import useAuthStore from '../stores/AuthStore';
@@ -8,6 +9,7 @@ interface CardProps {
   title: string;
   workDay: string;
   status: boolean;
+  applicants: Array<{userid: string}>;
 }
 
 export const CardJobOffer = (props: CardProps) => {
@@ -19,6 +21,17 @@ export const CardJobOffer = (props: CardProps) => {
 
   const navigate = useNavigate();
   const { applyJobOffer } = useJobOfferStore();
+
+  // State to hold whether the user has already applied
+  const [hasApplied, setHasApplied] = useState(false);
+
+// Check if the user has already applied for this job offer
+  useEffect(() => {
+    if (props.applicants) {
+      const hasApplied = props.applicants.some(applicant => applicant.userid === id);
+      setHasApplied(hasApplied);
+    }
+  }, [props.applicants, id]);
 
   const goToDetails = () => {
     navigate(`/job-offers/${props.offerId}`);
@@ -48,7 +61,8 @@ export const CardJobOffer = (props: CardProps) => {
             )}
           </h4>
           <span className="text-sm font-medium mt-5"> {props.workDay} </span>
-          {props.status && (
+          <br />
+          {props.status && !hasApplied && (
             <button
               type="button"
               className="inline-flex items-center justify-center bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10 mt-10"
@@ -56,6 +70,11 @@ export const CardJobOffer = (props: CardProps) => {
             >
               Aplicar
             </button>
+          )}
+          {props.status && hasApplied && (
+            <span className="rounded bg-[#13C296] py-1 px-2 text-sm font-medium text-white hover:bg-opacity-90">
+              Aplicando
+            </span>
           )}
         </div>
       </div>

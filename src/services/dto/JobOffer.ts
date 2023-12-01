@@ -5,4 +5,11 @@ export interface JobOfferDto {
   offerid: string;
   status: boolean;
   companyid: string;
+  applicants: Applicants[]; // This indicates that 'applicants' can be an empty array
+}
+
+export interface Applicants {
+  offerid: string,
+  userid: string,
+  applicantid: string,
 }

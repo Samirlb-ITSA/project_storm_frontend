@@ -21,7 +21,7 @@ interface Token {
 const Profile = () => {
   // ** Stores States
   const user = useUserStore((state) => state.User);
-  const { getUserById } = useUserStore();
+  const { getUserById, User } = useUserStore();
   const session = useAuthStore((state) => state.session);
   const { id } = jwtDecode<Token>(session);
 
@@ -113,40 +113,15 @@ const Profile = () => {
           </div>
           <div className="mt-4">
             <h3 className="mb-1.5 text-2xl font-semibold text-black dark:text-white">
-              Samir Lora
+              {User.firstname} {User.lastname}
             </h3>
-            <p className="font-medium">Programador</p>
-            <div className="mx-auto mt-4.5 mb-5.5 grid max-w-94 grid-cols-3 rounded-md border border-stroke py-2.5 shadow-1 dark:border-strokedark dark:bg-[#37404F]">
-              <div className="flex flex-col items-center justify-center gap-1 border-r border-stroke px-4 dark:border-strokedark xsm:flex-row">
-                <span className="font-semibold text-black dark:text-white">
-                  259
-                </span>
-                <span className="text-sm">Posts</span>
-              </div>
-              <div className="flex flex-col items-center justify-center gap-1 border-r border-stroke px-4 dark:border-strokedark xsm:flex-row">
-                <span className="font-semibold text-black dark:text-white">
-                  129K
-                </span>
-                <span className="text-sm">Followers</span>
-              </div>
-              <div className="flex flex-col items-center justify-center gap-1 px-4 xsm:flex-row">
-                <span className="font-semibold text-black dark:text-white">
-                  2K
-                </span>
-                <span className="text-sm">Following</span>
-              </div>
-            </div>
-
+            <p className="font-medium">{User.roles?.[0]?.name}</p>
             <div className="mx-auto max-w-180">
-              <h4 className="font-semibold text-black dark:text-white">
-                About Me
+              <h4 className="font-semibold mt-4 text-black dark:text-white">
+                Acerca de mi
               </h4>
               <p className="mt-4.5">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Pellentesque posuere fermentum urna, eu condimentum mauris
-                tempus ut. Donec fermentum blandit aliquet. Etiam dictum dapibus
-                ultricies. Sed vel aliquet libero. Nunc a augue fermentum,
-                pharetra ligula sed, aliquam lacus.
+                Hola, soy {User.firstname} {User.lastname}, un {User.roles?.[0]?.name}. Puedes contactarme en {User.email} o llamarme al {User.cellphone}. Actualmente estoy {User.status ? 'activo' : 'inactivo'} y vivo en {User.address}.
               </p>
             </div>
 

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { JobOfferDto } from '../services/dto/JobOffer';
+import { JobOfferDto, Applicants  } from '../services/dto/JobOffer';
 
 interface JobOfferState {
   loading: boolean;
@@ -20,7 +20,7 @@ interface JobOfferAction {
 const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const useJobOfferStore = create<JobOfferState & JobOfferAction>((set) => ({
-  loading: true,
+  loading: false,
   JobOffers: [],
   JobOffer: {
     offerid: '',
@@ -29,8 +29,10 @@ const useJobOfferStore = create<JobOfferState & JobOfferAction>((set) => ({
     creationDate: '',
     status: false,
     companyid: '',
+    applicants: [] as Applicants[] // This indicates that 'applicants' can be an empty array
   },
   getJobOffers: async (token: string) => {
+    set({ loading: true });
     const res = await fetch(`${baseUrl}/get_job_offers`, {
       method: 'GET',
       headers: {
@@ -38,28 +40,21 @@ const useJobOfferStore = create<JobOfferState & JobOfferAction>((set) => ({
       },
     });
     const data = await res.json();
-    if (res.status == 200) {
-      set({ loading: false });
-    }
-
-    set({ JobOffers: data.resultado });
+    set({ loading: false, JobOffers: data.resultado });
   },
   getJobOffer: async (id: string, token: string) => {
+    set({ loading: true });
     const res = await fetch(`${baseUrl}/get_offer/${id}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
     const data = await res.json();
-    if (res.status == 200) {
-      set({ loading: false });
-    }
-
-    set({ JobOffer: data });
+    set({ loading: false, JobOffer: data });
   },
   applyJobOffer: async (idOffer: string, userId: string, token: string) => {
+    set({ loading: true });
     const res = await fetch(`${baseUrl}/create_applicant`, {
       method: 'POST',
       headers: {
@@ -71,12 +66,11 @@ const useJobOfferStore = create<JobOfferState & JobOfferAction>((set) => ({
       }),
     });
     const data = await res.json();
+    set({ loading: false });
     if (res.status !== 200) {
       return Promise.reject('Hubo un error');
     }
-
     return Promise.resolve('Aplicado con exito');
   },
 }));
-
 export default useJobOfferStore;

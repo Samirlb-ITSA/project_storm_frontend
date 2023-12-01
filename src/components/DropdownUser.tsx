@@ -72,7 +72,6 @@ const DropdownUser = () => {
           <span className="block text-sm font-medium text-black dark:text-white">
             {token?.first_name ?? "" + " " + token?.last_name ?? ""}
           </span>
-          <span className="block text-xs">Programador</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">

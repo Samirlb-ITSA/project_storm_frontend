@@ -28,12 +28,8 @@ const ListJobOffers = () => {
       <div className="max-w-full overflow-x-auto">
         <h1 className="text-2xl font-bold">Ofertas Laborales</h1>
 
-        {jobOffers.length === 0 ? (
-          <p className="text-sm font-medium text-gray-500">
-            No hay ofertas laborales
-          </p>
-        ) : (
-          <div className="grid grid-cols-3 gap-4 mt-8">
+        {Array.isArray(jobOffers) && jobOffers.length > 0 ? (
+            <div className="grid grid-cols-3 gap-4 mt-8">
             {jobOffers.map((jobOffer: JobOfferDto, index) => (
               <CardJobOffer
                 offerId={jobOffer.offerid}
@@ -41,9 +37,14 @@ const ListJobOffers = () => {
                 title={jobOffer.name}
                 workDay={jobOffer.workday}
                 status={jobOffer.status}
+                applicants={jobOffer.applicants}
               />
             ))}
           </div>
+        ) : (
+          <p className="text-sm font-medium text-gray-500">
+            No hay ofertas laborales
+          </p>
         )}
       </div>
     </div>

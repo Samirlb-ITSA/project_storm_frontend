@@ -14,8 +14,8 @@ interface UserAction {
 const useUserStore = create<UserState & UserAction>((set) => ({
   Users: [],
   User: {
-    firstName: '',
-    lastName: '',
+    firstname: '',
+    lastname: '',
     email: '',
     cellphone: '',
     address: '',
