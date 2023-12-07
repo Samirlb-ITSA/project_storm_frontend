@@ -11,5 +11,4 @@ export interface JobOfferDto {
 export interface Applicants {
   offerid: string,
   userid: string,
-  applicantid: string,
 }

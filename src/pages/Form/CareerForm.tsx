@@ -17,7 +17,7 @@ interface CareerIn {
 
 const CareerForm = () => {
   const navigate = useNavigate();
-  const dataRequester = apiClient();
+  const apiService = apiClient();
   let initialCareer: CareerIn = {
     name: '',
     status: true,
@@ -31,7 +31,7 @@ const CareerForm = () => {
   
   useEffect(() => {
     const fetchFaculties = async () => {
-      const response = await dataRequester('get_faculties', {
+      const response = await apiService('get_faculties', {
         method: 'GET',
       });
       const content = await response.resultado;
@@ -79,7 +79,7 @@ const CareerForm = () => {
     setErrors(newErrors);
 
     if (Object.values(newErrors).every((error) => error === undefined)) {
-      const rawResponse = await dataRequester('create_career', {
+      const rawResponse = await apiService('create_career', {
         method: 'POST',
         body: formData,
       });

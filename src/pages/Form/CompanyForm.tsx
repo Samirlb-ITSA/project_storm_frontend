@@ -20,7 +20,7 @@ interface Company {
 
 const CompanyForm = () => {
   const navigate = useNavigate();
-  const dataRequester = apiClient();
+  const apiService = apiClient();
   let initialCompany: Company = {
     name: '',
     email: '',
@@ -38,7 +38,7 @@ const CompanyForm = () => {
   
   useEffect(() => {
     const fetchFaculties = async () => {
-      const response = await dataRequester('get_faculties', {
+      const response = await apiService('get_faculties', {
         method: 'GET',
       });
       const result = await response.resultado;
@@ -115,7 +115,7 @@ const CompanyForm = () => {
     setErrors(newErrors);
 
     if (Object.values(newErrors).every((error) => error === undefined)) {
-      const rawResponse = await dataRequester('create_company', {
+      const rawResponse = await apiService('create_company', {
         method: 'POST',
         body: {
           ...formData,

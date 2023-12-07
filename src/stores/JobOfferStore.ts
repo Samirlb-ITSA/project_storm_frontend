@@ -10,11 +10,6 @@ interface JobOfferState {
 interface JobOfferAction {
   getJobOffers: (token: string) => void;
   getJobOffer: (id: string, token: string) => void;
-  applyJobOffer: (
-    idOffer: string,
-    idUser: string,
-    token: string,
-  ) => Promise<string>;
 }
 
 const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
@@ -52,25 +47,6 @@ const useJobOfferStore = create<JobOfferState & JobOfferAction>((set) => ({
     });
     const data = await res.json();
     set({ loading: false, JobOffer: data });
-  },
-  applyJobOffer: async (idOffer: string, userId: string, token: string) => {
-    set({ loading: true });
-    const res = await fetch(`${baseUrl}/create_applicant`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        offerid: idOffer,
-        userid: userId,
-      }),
-    });
-    const data = await res.json();
-    set({ loading: false });
-    if (res.status !== 200) {
-      return Promise.reject('Hubo un error');
-    }
-    return Promise.resolve('Aplicado con exito');
   },
 }));
 export default useJobOfferStore;

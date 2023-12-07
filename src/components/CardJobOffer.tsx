@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useJobOfferStore from '../stores/JobOfferStore';
+import { apiClient } from '../js/apiClient';
+import toast from 'react-hot-toast';
+import Skeleton from 'react-loading-skeleton';
 import useAuthStore from '../stores/AuthStore';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 
@@ -20,7 +22,7 @@ export const CardJobOffer = (props: CardProps) => {
   const { id } = jwtDecode<JwtPayload>(session);
 
   const navigate = useNavigate();
-  const { applyJobOffer } = useJobOfferStore();
+  const apiService = apiClient();
 
   // State to hold whether the user has already applied
   const [hasApplied, setHasApplied] = useState(false);
@@ -37,8 +39,18 @@ export const CardJobOffer = (props: CardProps) => {
     navigate(`/job-offers/${props.offerId}`);
   };
 
-  const handleApplyJobOffer = () => {
-    applyJobOffer(props.offerId, id, session);
+  const handleApplyJobOffer = async () => {
+    try {
+      const rawResponse = await apiService('create_applicant', {
+        method: 'POST',
+        body: {
+          userid: id,
+          offerid: props.offerId
+      }});
+      toast.success(rawResponse.resultado)
+    } catch (error) {
+      toast.error(String(error));
+    }
   };
 
   return (
@@ -72,7 +84,8 @@ export const CardJobOffer = (props: CardProps) => {
             </button>
           )}
           {props.status && hasApplied && (
-            <span className="rounded bg-[#13C296] py-1 px-2 text-sm font-medium text-white hover:bg-opacity-90">
+            <span 
+            className="inline-flex items-center rounded-full justify-center bg-[#13C296] py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10 mt-10">
               Aplicando
             </span>
           )}

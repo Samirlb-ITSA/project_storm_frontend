@@ -19,7 +19,7 @@ interface JobOfferIn {
 
 const JobOfferForm = () => {
   const navigate = useNavigate();
-  const dataRequester = apiClient();
+  const apiService = apiClient();
   let initialJobOffer: JobOfferIn = {
     offerid: '',
     name: '',
@@ -35,7 +35,7 @@ const JobOfferForm = () => {
   
   useEffect(() => {
     const fetchCompanies = async () => {
-      const response = await dataRequester('get_companies', {
+      const response = await apiService('get_companies', {
         method: 'GET',
       });
       const content = await response.resultado;
@@ -89,7 +89,7 @@ const JobOfferForm = () => {
     setErrors(newErrors);
 
     if (Object.values(newErrors).every((error) => error === undefined)) {
-      const rawResponse = await dataRequester('create_job_offer', {
+      const rawResponse = await apiService('create_job_offer', {
         method: 'POST',
         body: formData,
       });

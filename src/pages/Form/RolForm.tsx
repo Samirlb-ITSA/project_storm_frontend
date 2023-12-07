@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { apiClient } from '../../js/apiClient';
 
 const RolForm = () => {
-  const dataRequester = apiClient();
+  const apiService = apiClient();
   interface Rol {
     [key: string]: string;
     name: string;
@@ -47,7 +47,7 @@ const RolForm = () => {
     setErrors(newErrors);
 
     if (Object.values(newErrors).every((error) => error === undefined)) {
-      const rawResponse = await dataRequester('create_role', {
+      const rawResponse = await apiService('create_role', {
         method: 'POST',
         body: formData,
       });

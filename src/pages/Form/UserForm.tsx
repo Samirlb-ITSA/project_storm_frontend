@@ -12,7 +12,7 @@ interface RoleOption {
 
 const UserForm = () => {
   const navigate = useNavigate();
-  const dataRequester = apiClient();
+  const apiService = apiClient();
   let User: { [key: string]: string | number } = {
     firstname: '',
     lastname: '',
@@ -43,7 +43,7 @@ const UserForm = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await dataRequester('get_roles', { method: 'GET' });
+        const response = await apiService('get_roles', { method: 'GET' });
         const data = await response.resultado;
         console.log(data)
         setRoles(data.map((role: { roleid: string; name: string }) => ({  value: role.roleid, label: role.name } )));
@@ -54,7 +54,7 @@ const UserForm = () => {
 
     const fetchCareers = async () => {
       try {
-        const response = await dataRequester('get_careers', {
+        const response = await apiService('get_careers', {
           method: 'GET',
         });
         const content = await response.resultado;
@@ -138,7 +138,7 @@ const UserForm = () => {
     setErrors(newErrors);
 
     if (Object.values(newErrors).every((error) => error === undefined)) {
-      const rawResponse = await dataRequester('create_user', {
+      const rawResponse = await apiService('create_user', {
         method: 'POST',
         body: {
           ...formData,
